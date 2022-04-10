@@ -82,10 +82,10 @@ void BaseContent::initUi()
 {
     this->insertTab(0, requestsPage, "Requests");
     this->insertTab(1, chainPage, "Chain");
-    setCurrentIndex(0);
     setDocumentMode(true);
     setTabVisible(0, false);
     setTabVisible(1, false);
+    setCurrentIndex(0);
 }
 
 
