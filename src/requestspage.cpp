@@ -28,10 +28,10 @@ RequestsPage::RequestsPage(QWidget* parent)
 
 void RequestsPage::initUi()
 {
-    addWidget(leftSideBar);
-    setStretchFactor(0, 1);
-    addWidget(requestContentPage);
-    setStretchFactor(1, 4);
+    insertWidget(0, leftSideBar);
+    insertWidget(1, requestContentPage);
+    // 会自己剪裁
+    setSizes({1000, 4000});
 }
 
 void RequestsPage::resizeEvent(QResizeEvent *e)
