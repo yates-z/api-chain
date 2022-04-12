@@ -1,15 +1,108 @@
 #include "requestspage.h"
 
-LeftSideBar::LeftSideBar(QWidget* parent)
-    :layout(new QVBoxLayout(this))
+HistoryWidget::HistoryWidget(QWidget* parent)
 {
     initUi();
 }
 
-void LeftSideBar::initUi()
+void HistoryWidget::initUi()
+{
+    setBackground();
+}
+
+void HistoryWidget::setBackground(const QColor c)
 {
     QPalette p;
-    p.setColor(QPalette::Window, QColor("#1a1a1a"));
+    p.setColor(QPalette::Window, c);
+    setAutoFillBackground(true);
+    setPalette(p);
+}
+
+
+CollectionWidget::CollectionWidget(QWidget* parent)
+{
+    initUi();
+}
+
+void CollectionWidget::initUi()
+{
+    setBackground();
+}
+
+void CollectionWidget::setBackground(const QColor c)
+{
+    QPalette p;
+    p.setColor(QPalette::Window, c);
+    setAutoFillBackground(true);
+    setPalette(p);
+}
+
+
+LeftSideBar::LeftSideBar(QWidget* parent)
+    :layout(new QVBoxLayout(this))
+    , historyBtn(new TopMenuTabButton(this))
+    , collectionBtn(new TopMenuTabButton(this))
+    , buttonHeight(45)
+    , btnGroup(new QButtonGroup(this))
+    , tabWidget(new QTabWidget(this))
+    , historyWidget(new HistoryWidget(this))
+    , collectionWidget(new CollectionWidget(this))
+{
+    initUi();
+    initSignals();
+}
+
+void LeftSideBar::initUi()
+{
+    setBackground();
+
+    // history button
+    historyBtn->setText(tr("HISTORY"));
+    historyBtn->setFixedHeight(buttonHeight);
+    historyBtn->setChecked(true);
+    historyBtn->setButtonType(TopMenuTabButton::LeftSideBarTop);
+
+    // collection button
+    collectionBtn->setText(tr("COLLECTION"));
+    collectionBtn->setFixedHeight(buttonHeight);
+    collectionBtn->setButtonType(TopMenuTabButton::LeftSideBarTop);
+
+    // add buttons to button group
+    btnGroup->addButton(historyBtn);
+    btnGroup->addButton(collectionBtn);
+    btnGroup->setExclusive(true);
+
+    // add buttons to layout
+    QHBoxLayout *topLayout = new QHBoxLayout();
+    topLayout->addWidget(historyBtn);
+    topLayout->addWidget(collectionBtn);
+
+    topLayout->setSpacing(0);
+    topLayout->setContentsMargins(0, 0, 0, 0);
+    layout->addLayout(topLayout);
+
+    tabWidget->setDocumentMode(true);
+    tabWidget->insertTab(0, historyWidget, "History");
+    tabWidget->insertTab(1, collectionWidget, "Collection");
+    collectionWidget->setBackground(Qt::red);
+    tabWidget->setTabVisible(0, false);
+    tabWidget->setTabVisible(1, false);
+    tabWidget->setCurrentIndex(0);
+    layout->addWidget(tabWidget);
+    layout->setSpacing(0);
+    layout->setContentsMargins(0, 0, 0, 0);
+}
+
+void LeftSideBar::initSignals()
+{
+    connect(historyBtn, &TopMenuTabButton::clicked, this, [&]{tabWidget->setCurrentIndex(0);});
+    connect(collectionBtn, &TopMenuTabButton::clicked, this, [&]{tabWidget->setCurrentIndex(1);});
+}
+
+void LeftSideBar::setBackground(QColor c)
+{
+    QPalette p;
+    p.setColor(QPalette::Window, c);
     setAutoFillBackground(true);
     setPalette(p);
 }
@@ -63,7 +156,7 @@ void RequestsPage::initSignals()
     connect(leftSideBtn, &PopUpButton::clicked, this, [&]{
         leftSideBtn->hide();
         leftSideBar->show();
-        _requestsPage->setSizes({1000, 4000});
+        _requestsPage->setSizes({2000, 7000});
     });
 }
 

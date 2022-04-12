@@ -5,21 +5,51 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QResizeEvent>
+#include <QTabWidget>
+#include <QButtonGroup>
+
 #include "buttons.h"
 #include <QDebug>
+
+class HistoryWidget: public QWidget
+{
+    Q_OBJECT
+public:
+    HistoryWidget(QWidget* parent);
+    void initUi();
+    void setBackground(const QColor c = QColor(26, 26, 26));
+};
+
+class CollectionWidget: public QWidget
+{
+    Q_OBJECT
+public:
+    CollectionWidget(QWidget* parent);
+    void initUi();
+    void setBackground(const QColor c = QColor(26, 26, 26));
+
+};
 
 class LeftSideBar: public QWidget
 {
     Q_OBJECT
 signals:
     void afterHide();
-//    void afterShow();
 public:
     LeftSideBar(QWidget* parent=nullptr);
     void initUi();
+    void initSignals();
     void resizeEvent(QResizeEvent*);
+    void setBackground(QColor c = QColor(26, 26, 26));
 private:
     QVBoxLayout* layout;
+    TopMenuTabButton* historyBtn;
+    TopMenuTabButton* collectionBtn;
+    int buttonHeight;
+    QButtonGroup* btnGroup;
+    QTabWidget* tabWidget;
+    HistoryWidget* historyWidget;
+    CollectionWidget* collectionWidget;
 };
 
 
