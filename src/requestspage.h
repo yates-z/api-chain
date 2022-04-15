@@ -3,15 +3,53 @@
 
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <QPushButton>
+#include <QResizeEvent>
+#include <QTabWidget>
+#include <QButtonGroup>
+
+#include "buttons.h"
+#include <QDebug>
+
+class HistoryWidget: public QWidget
+{
+    Q_OBJECT
+public:
+    HistoryWidget(QWidget* parent);
+    void initUi();
+    void setBackground(const QColor c = QColor(26, 26, 26));
+};
+
+class CollectionWidget: public QWidget
+{
+    Q_OBJECT
+public:
+    CollectionWidget(QWidget* parent);
+    void initUi();
+    void setBackground(const QColor c = QColor(26, 26, 26));
+
+};
 
 class LeftSideBar: public QWidget
 {
     Q_OBJECT
+signals:
+    void afterHide();
 public:
     LeftSideBar(QWidget* parent=nullptr);
     void initUi();
+    void initSignals();
+    void resizeEvent(QResizeEvent*);
+    void setBackground(QColor c = QColor(26, 26, 26));
 private:
     QVBoxLayout* layout;
+    TopMenuTabButton* historyBtn;
+    TopMenuTabButton* collectionBtn;
+    int buttonHeight;
+    QButtonGroup* btnGroup;
+    QTabWidget* tabWidget;
+    HistoryWidget* historyWidget;
+    CollectionWidget* collectionWidget;
 };
 
 
@@ -23,15 +61,19 @@ public:
 };
 
 
-class RequestsPage: public QSplitter
+class RequestsPage: public QWidget
 {
     Q_OBJECT
 public:
     RequestsPage(QWidget* parent=nullptr);
     void initUi();
+    void initSignals();
     void resizeEvent(QResizeEvent*);
 private:
-    LeftSideBar *leftSideBar;
+    QSplitter* _requestsPage;
+    QHBoxLayout* layout;
+    LeftSideBar* leftSideBar;
+    PopUpButton* leftSideBtn;
     RequestsContentPage* requestContentPage;
 };
 #endif // REQUESTSPAGE_H

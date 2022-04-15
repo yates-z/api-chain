@@ -103,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::initUi()
 {
-    this->resize(1080, 720);
+    this->resize(1260, 720);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(topMenu);
     mainLayout->addWidget(content);
