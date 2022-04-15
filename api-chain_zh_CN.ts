@@ -17,22 +17,22 @@
 <context>
     <name>TopMenu</name>
     <message>
-        <location filename="src/mainwindow.cpp" line="29"/>
+        <location filename="src/mainwindow.cpp" line="31"/>
         <source>API Chain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="45"/>
+        <location filename="src/mainwindow.cpp" line="47"/>
         <source>Requests</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="51"/>
+        <location filename="src/mainwindow.cpp" line="53"/>
         <source>Chain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="62"/>
+        <location filename="src/mainwindow.cpp" line="64"/>
         <source>settings</source>
         <translation type="unfinished"></translation>
     </message>

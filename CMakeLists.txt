@@ -28,6 +28,8 @@ set(PROJECT_SOURCES
         src/requestspage.cpp
         src/chainpage.h
         src/chainpage.cpp
+        src/log.h
+        src/log.cpp
         resource.qrc
         ${TS_FILES}
 )
