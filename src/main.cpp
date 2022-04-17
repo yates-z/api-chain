@@ -9,9 +9,9 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-//    #ifdef QT_NO_DEBUG
+    #ifdef QT_NO_DEBUG
     qInstallMessageHandler(logger);
-//    #endif
+    #endif
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();

@@ -6,11 +6,11 @@
 #include <QPainter>
 #include <QMouseEvent>
 
-class TopMenuTabButton: public QPushButton
+class TitleBarTabButton: public QPushButton
 {
     Q_OBJECT
 public:
-    TopMenuTabButton(QWidget* parent = nullptr);
+    TitleBarTabButton(QWidget* parent = nullptr);
     enum ButtonType{
         AppTop,
         LeftSideBarTop,

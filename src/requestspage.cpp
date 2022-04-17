@@ -40,11 +40,11 @@ void CollectionWidget::setBackground(const QColor c)
 
 LeftSideBar::LeftSideBar(QWidget* parent)
     :layout(new QVBoxLayout(this))
-    , historyBtn(new TopMenuTabButton(this))
-    , collectionBtn(new TopMenuTabButton(this))
+    , historyBtn(new TitleBarTabButton(this))
+    , collectionBtn(new TitleBarTabButton(this))
     , buttonHeight(45)
     , btnGroup(new QButtonGroup(this))
-    , tabWidget(new QTabWidget(this))
+    , tabWidget(new QStackedWidget(this))
     , historyWidget(new HistoryWidget(this))
     , collectionWidget(new CollectionWidget(this))
 {
@@ -60,12 +60,12 @@ void LeftSideBar::initUi()
     historyBtn->setText(tr("HISTORY"));
     historyBtn->setFixedHeight(buttonHeight);
     historyBtn->setChecked(true);
-    historyBtn->setButtonType(TopMenuTabButton::LeftSideBarTop);
+    historyBtn->setButtonType(TitleBarTabButton::LeftSideBarTop);
 
     // collection button
     collectionBtn->setText(tr("COLLECTION"));
     collectionBtn->setFixedHeight(buttonHeight);
-    collectionBtn->setButtonType(TopMenuTabButton::LeftSideBarTop);
+    collectionBtn->setButtonType(TitleBarTabButton::LeftSideBarTop);
 
     // add buttons to button group
     btnGroup->addButton(historyBtn);
@@ -81,12 +81,10 @@ void LeftSideBar::initUi()
     topLayout->setContentsMargins(0, 0, 0, 0);
     layout->addLayout(topLayout);
 
-    tabWidget->setDocumentMode(true);
-    tabWidget->insertTab(0, historyWidget, "History");
-    tabWidget->insertTab(1, collectionWidget, "Collection");
+//    tabWidget->setDocumentMode(true);
+    tabWidget->insertWidget(0, historyWidget);
+    tabWidget->insertWidget(1, collectionWidget);
     collectionWidget->setBackground(Qt::red);
-    tabWidget->setTabVisible(0, false);
-    tabWidget->setTabVisible(1, false);
     tabWidget->setCurrentIndex(0);
     layout->addWidget(tabWidget);
     layout->setSpacing(0);
@@ -95,8 +93,8 @@ void LeftSideBar::initUi()
 
 void LeftSideBar::initSignals()
 {
-    connect(historyBtn, &TopMenuTabButton::clicked, this, [&]{tabWidget->setCurrentIndex(0);});
-    connect(collectionBtn, &TopMenuTabButton::clicked, this, [&]{tabWidget->setCurrentIndex(1);});
+    connect(historyBtn, &TitleBarTabButton::clicked, this, [&]{tabWidget->setCurrentIndex(0);});
+    connect(collectionBtn, &TitleBarTabButton::clicked, this, [&]{tabWidget->setCurrentIndex(1);});
 }
 
 void LeftSideBar::setBackground(QColor c)

@@ -15,7 +15,7 @@
     </message>
 </context>
 <context>
-    <name>TopMenu</name>
+    <name>TitleBar</name>
     <message>
         <location filename="src/mainwindow.cpp" line="31"/>
         <source>API Chain</source>

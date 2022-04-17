@@ -18,8 +18,9 @@ set(TS_FILES api-chain_zh_CN.ts)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        src/mainwindow.cpp
         src/mainwindow.h
+        src/mainwindow.mm
+        src/mainwindow.cpp
         src/buttons.h
         src/buttons.cpp
         src/labels.h
