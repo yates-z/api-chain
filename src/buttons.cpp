@@ -1,6 +1,6 @@
 #include "buttons.h"
 
-TopMenuTabButton::TopMenuTabButton(QWidget* parent)
+TitleBarTabButton::TitleBarTabButton(QWidget* parent)
     : btnType(AppTop)
     , isEnter(false)
     , color(QColor(255, 255, 255))
@@ -15,7 +15,7 @@ TopMenuTabButton::TopMenuTabButton(QWidget* parent)
     initUi();
 }
 
-void TopMenuTabButton::initUi()
+void TitleBarTabButton::initUi()
 {
     if (btnType == AppTop)
     {
@@ -39,13 +39,13 @@ void TopMenuTabButton::initUi()
     }
 }
 
-void TopMenuTabButton::setButtonType(const ButtonType t)
+void TitleBarTabButton::setButtonType(const ButtonType t)
 {
     btnType = t;
     initUi();
 }
 
-void TopMenuTabButton::enterEvent(QEnterEvent *e)
+void TitleBarTabButton::enterEvent(QEnterEvent *e)
 {
     QPushButton::enterEvent(e);
     setCursor(Qt::PointingHandCursor);
@@ -53,14 +53,14 @@ void TopMenuTabButton::enterEvent(QEnterEvent *e)
     repaint();
 }
 
-void TopMenuTabButton::leaveEvent(QEvent *e)
+void TitleBarTabButton::leaveEvent(QEvent *e)
 {
     QPushButton::leaveEvent(e);
     isEnter = false;
     repaint();
 }
 
-void TopMenuTabButton::paintEvent(QPaintEvent* e)
+void TitleBarTabButton::paintEvent(QPaintEvent* e)
 {
     QPainter painter(this);
     // 先处理背景色

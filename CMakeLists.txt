@@ -18,8 +18,9 @@ set(TS_FILES api-chain_zh_CN.ts)
 
 set(PROJECT_SOURCES
         src/main.cpp
-        src/mainwindow.cpp
         src/mainwindow.h
+        src/mainwindow.mm
+        src/mainwindow.cpp
         src/buttons.h
         src/buttons.cpp
         src/labels.h
@@ -28,6 +29,8 @@ set(PROJECT_SOURCES
         src/requestspage.cpp
         src/chainpage.h
         src/chainpage.cpp
+        src/log.h
+        src/log.cpp
         resource.qrc
         ${TS_FILES}
 )

@@ -5,8 +5,9 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QResizeEvent>
-#include <QTabWidget>
+#include <QStackedWidget>
 #include <QButtonGroup>
+#include <QSysInfo>
 
 #include "buttons.h"
 #include <QDebug>
@@ -43,11 +44,11 @@ public:
     void setBackground(QColor c = QColor(26, 26, 26));
 private:
     QVBoxLayout* layout;
-    TopMenuTabButton* historyBtn;
-    TopMenuTabButton* collectionBtn;
+    TitleBarTabButton* historyBtn;
+    TitleBarTabButton* collectionBtn;
     int buttonHeight;
     QButtonGroup* btnGroup;
-    QTabWidget* tabWidget;
+    QStackedWidget* tabWidget;
     HistoryWidget* historyWidget;
     CollectionWidget* collectionWidget;
 };

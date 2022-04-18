@@ -4,9 +4,14 @@
 #include <QLocale>
 #include <QTranslator>
 
+#include "log.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    #ifdef QT_NO_DEBUG
+    qInstallMessageHandler(logger);
+    #endif
 
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();

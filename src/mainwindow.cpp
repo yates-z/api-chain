@@ -1,26 +1,28 @@
 #include "mainwindow.h"
 
-TopMenu::TopMenu(QWidget *parent)
+TitleBar::TitleBar(QWidget *parent)
     : layout(new QHBoxLayout(this))
     , logo(new QLabel(this))
     , title(new QLabel(this))
     , btnGroup(new QButtonGroup(this))
-    , apiPageButton(new TopMenuTabButton(this))
-    , apiChainButton(new TopMenuTabButton(this))
+    , apiPageButton(new TitleBarTabButton(this))
+    , apiChainButton(new TitleBarTabButton(this))
     , settingsButton(new QPushButton(this))
     , fixedHeight(48)
 {
     initUi();
 }
 
-void TopMenu::initUi()
+void TitleBar::initUi()
 {
     QPalette p1;
     p1.setColor(QPalette::Window, QColor("#263762"));
+//    p1.setColor(QPalette::Window, QColor("#b5cbd6"));
     this->setAutoFillBackground(true);
     this->setPalette(p1);
     this->setFixedHeight(fixedHeight);
-
+    // 留位置给系统按钮
+    layout->addSpacerItem(new QSpacerItem(60, 48));
     // logo
     logo->setFixedSize(fixedHeight*0.6, fixedHeight*0.6);
     layout->addWidget(logo);
@@ -80,20 +82,18 @@ BaseContent::BaseContent(QWidget *parent)
 
 void BaseContent::initUi()
 {
-    this->insertTab(0, requestsPage, "Requests");
-    this->insertTab(1, chainPage, "Chain");
-    setDocumentMode(true);
-    setTabVisible(0, false);
-    setTabVisible(1, false);
+    insertWidget(0, requestsPage);
+    insertWidget(1, chainPage);
     setCurrentIndex(0);
 }
 
 
+#ifdef Q_OS_WIN
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , mainWindow(new QWidget(this))
     , mainLayout(new QVBoxLayout(mainWindow))
-    , topMenu(new TopMenu(mainWindow))
+    , titleBar(new TitleBar(mainWindow))
     , content(new BaseContent(mainWindow))
 {
     setCentralWidget(mainWindow);
@@ -105,7 +105,7 @@ void MainWindow::initUi()
 {
     this->resize(1260, 720);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->addWidget(topMenu);
+    mainLayout->addWidget(titleBar);
     mainLayout->addWidget(content);
     mainLayout->setSpacing(0);
 }
@@ -113,8 +113,8 @@ void MainWindow::initUi()
 
 void MainWindow::initSignals()
 {
-    connect(topMenu->apiPageButton, &TopMenuTabButton::clicked, this, [&]{content->setCurrentIndex(0);});
-    connect(topMenu->apiChainButton, &TopMenuTabButton::clicked, this, [&]{content->setCurrentIndex(1);});
+    connect(titleBar->apiPageButton, &TitleBarTabButton::clicked, this, [&]{content->setCurrentIndex(0);});
+    connect(titleBar->apiChainButton, &TitleBarTabButton::clicked, this, [&]{content->setCurrentIndex(1);});
 }
 
 
@@ -122,3 +122,4 @@ MainWindow::~MainWindow()
 {
 }
 
+#endif
