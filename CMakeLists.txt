@@ -16,10 +16,15 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 
 set(TS_FILES api-chain_zh_CN.ts)
 
+if(APPLE)
+    set(CROSSFILES, src/mainwindow.mm)
+elseif(WIN32)
+    set(CROSSFILES, src/mainwindow.mm)
+endif()
+
 set(PROJECT_SOURCES
         src/main.cpp
-        src/mainwindow.h
-        src/mainwindow.mm
+        ${CROSSFILES}
         src/mainwindow.cpp
         src/buttons.h
         src/buttons.cpp
