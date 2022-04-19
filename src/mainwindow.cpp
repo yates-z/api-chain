@@ -3,11 +3,11 @@
 TitleBar::TitleBar(QWidget *parent)
     : layout(new QHBoxLayout(this))
     , logo(new QLabel(this))
-    , title(new QLabel(this))
+    , title(new TitleLabel(this, tr("API Chain")))
     , btnGroup(new QButtonGroup(this))
     , apiPageButton(new TitleBarTabButton(this))
     , apiChainButton(new TitleBarTabButton(this))
-    , settingsButton(new QPushButton(this))
+    , settingsButton(new SvgButton(QSize(20, 20), ":/resource/svg/settings.svg", this))
     , fixedHeight(48)
 {
     initUi();
@@ -15,54 +15,58 @@ TitleBar::TitleBar(QWidget *parent)
 
 void TitleBar::initUi()
 {
+    // 设置三个QHBoxLayout,让tab按钮居中
+    QHBoxLayout *leftLayout = new QHBoxLayout;
+    QHBoxLayout *middleLayout = new QHBoxLayout;
+    QHBoxLayout * rightLayout = new QHBoxLayout;
+    // 设置背景颜色
     QPalette p1;
-    p1.setColor(QPalette::Window, QColor("#263762"));
-//    p1.setColor(QPalette::Window, QColor("#b5cbd6"));
+    p1.setColor(QPalette::Window, Qt::white);
     this->setAutoFillBackground(true);
     this->setPalette(p1);
     this->setFixedHeight(fixedHeight);
-    // 留位置给系统按钮
-    layout->addSpacerItem(new QSpacerItem(60, 48));
+
+    #ifdef Q_OS_MAC
+    // OSX留位置给系统按钮
+    leftlayout->addSpacerItem(new QSpacerItem(60, 48));
+    #endif
     // logo
     logo->setFixedSize(fixedHeight*0.6, fixedHeight*0.6);
-    layout->addWidget(logo);
+    leftLayout->addWidget(logo);
 
     // 标题
-    title->setText(tr("API Chain"));
-    QPalette p2;
-    p2.setColor(QPalette::WindowText,Qt::white);
-    title->setPalette(p2);
-    title->setAlignment(Qt::AlignCenter);
-    title->setFixedWidth(100);
-    layout->addWidget(title);
-
-    layout->addSpacing(15);
+    leftLayout->addWidget(title);
+    leftLayout->addStretch(1);
+    layout->addLayout(leftLayout, 1);
 
     // 分割线
-    SplitLine* splitLine = new SplitLine(this);
-    splitLine->setHeight(fixedHeight*0.3);
-    layout->addWidget(splitLine);
+    SplitLine* splitLine = new SplitLine(this, QColor(230, 230, 230));
+    splitLine->setHeight(fixedHeight * 0.6);
+    middleLayout->addWidget(splitLine);
 
     // tab
     apiPageButton->setText(tr("Requests"));
     apiPageButton->setFixedSize(160, fixedHeight);
     apiPageButton->setChecked(true);
-    layout->addWidget(apiPageButton);
+    middleLayout->addWidget(apiPageButton);
 
     apiChainButton->setEnabled(false); // 禁用
     apiChainButton->setText(tr("Chain"));
     apiChainButton->setFixedSize(160, fixedHeight);
-    layout->addWidget(apiChainButton);
+    middleLayout->addWidget(apiChainButton);
 
     // 分割线
-    SplitLine* splitLine2 = new SplitLine(this);
-    splitLine2->setHeight(fixedHeight*0.3);
-    layout->addWidget(splitLine2);
-    layout->addStretch(1);
+    SplitLine* splitLine2 = new SplitLine(this, QColor(230, 230, 230));
+    splitLine2->setHeight(fixedHeight * 0.6);
+    middleLayout->addWidget(splitLine2);
+
+    layout->addLayout(middleLayout, 1);
 
     // 右侧设置按钮
-    settingsButton->setText(tr("settings"));
-    layout->addWidget(settingsButton);
+    rightLayout->addStretch(1);
+    settingsButton->setFixedSize(36, 36);
+    rightLayout->addWidget(settingsButton);
+    layout->addLayout(rightLayout, 1);
 
     layout->setContentsMargins(10, 0, 10, 0);
     layout->setSpacing(1);

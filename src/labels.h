@@ -12,4 +12,11 @@ public:
     void setHeight(int h);
 };
 
+
+class TitleLabel: public QLabel
+{
+    Q_OBJECT
+public:
+    TitleLabel(QWidget *parent, const QString&, const QColor color= QColor(30, 35, 47));
+};
 #endif // LABELS_H

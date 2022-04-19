@@ -5,6 +5,11 @@
 #include <QPen>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QPainterPath>
+#include <QSvgRenderer>
+#include <QFile>
+#include <QDomDocument>
+#include "constants.h"
 
 class TitleBarTabButton: public QPushButton
 {
@@ -45,5 +50,24 @@ public:
     void paintEvent(QPaintEvent*);
 private:
     bool isEnter;
+};
+
+class SvgButton: public QPushButton
+{
+    Q_OBJECT
+public:
+    SvgButton(const QSize&, const QString&, QWidget* parent=nullptr);
+protected:
+    void paintEvent(QPaintEvent *);
+    void enterEvent(QEnterEvent *);
+    void leaveEvent(QEvent *);
+    void SetSVGColor(QDomElement elem, QString color);
+private:
+    QSize size;
+    QString path;
+    QColor color;
+    QColor hoverColor;
+    bool isEnter;
+    QDomDocument doc;
 };
 #endif // BUTTONS_H

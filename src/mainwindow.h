@@ -24,12 +24,12 @@ public:
 private:
     QHBoxLayout* layout;
     QLabel* logo;
-    QLabel* title;
+    TitleLabel* title;
     QButtonGroup* btnGroup;
 public:
     TitleBarTabButton* apiPageButton;
     TitleBarTabButton* apiChainButton;
-    QPushButton* settingsButton;
+    SvgButton* settingsButton;
 private:
     const int fixedHeight;
 };

@@ -17,23 +17,18 @@
 <context>
     <name>TitleBar</name>
     <message>
-        <location filename="src/mainwindow.cpp" line="31"/>
+        <location filename="src/mainwindow.cpp" line="6"/>
         <source>API Chain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="47"/>
+        <location filename="src/mainwindow.cpp" line="48"/>
         <source>Requests</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="53"/>
+        <location filename="src/mainwindow.cpp" line="54"/>
         <source>Chain</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mainwindow.cpp" line="64"/>
-        <source>settings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
