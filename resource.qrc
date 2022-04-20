@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>resource/svg/settings.svg</file>
+        <file>resource/svg/folder.svg</file>
+        <file>resource/svg/history.svg</file>
     </qresource>
 </RCC>

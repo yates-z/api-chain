@@ -10,6 +10,7 @@
 #include <QSysInfo>
 
 #include "buttons.h"
+#include "widgets.h"
 #include <QDebug>
 
 class HistoryWidget: public QWidget
@@ -18,7 +19,7 @@ class HistoryWidget: public QWidget
 public:
     HistoryWidget(QWidget* parent);
     void initUi();
-    void setBackground(const QColor c = QColor(26, 26, 26));
+    void setBackground(const QColor c = QColor(255, 255, 255));
 };
 
 class CollectionWidget: public QWidget
@@ -27,7 +28,7 @@ class CollectionWidget: public QWidget
 public:
     CollectionWidget(QWidget* parent);
     void initUi();
-    void setBackground(const QColor c = QColor(26, 26, 26));
+    void setBackground(const QColor c = QColor(255, 255, 255));
 
 };
 
@@ -41,12 +42,15 @@ public:
     void initUi();
     void initSignals();
     void resizeEvent(QResizeEvent*);
-    void setBackground(QColor c = QColor(26, 26, 26));
+    void setBackground(QColor c = QColor(255, 255, 255));
 private:
+    BorderRadiusWidget* centralWidget;
+    QHBoxLayout* centralWidgetLayout;
+
     QVBoxLayout* layout;
-    TitleBarTabButton* historyBtn;
-    TitleBarTabButton* collectionBtn;
-    int buttonHeight;
+    LeftBarTabButton* historyBtn;
+    LeftBarTabButton* collectionBtn;
+    int buttonWidth;
     QButtonGroup* btnGroup;
     QStackedWidget* tabWidget;
     HistoryWidget* historyWidget;

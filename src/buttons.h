@@ -11,22 +11,14 @@
 #include <QDomDocument>
 #include "constants.h"
 
-class TitleBarTabButton: public QPushButton
+class BasicButton:public QPushButton
 {
     Q_OBJECT
 public:
-    TitleBarTabButton(QWidget* parent = nullptr);
-    enum ButtonType{
-        AppTop,
-        LeftSideBarTop,
-    };
-    void initUi();
-    void paintEvent(QPaintEvent *);
+    BasicButton(QWidget* parent = nullptr);
     void enterEvent(QEnterEvent *);
     void leaveEvent(QEvent *);
-    void setButtonType(const ButtonType);
-private:
-    ButtonType btnType;
+protected:
     bool isEnter;
     QColor color;
     QColor background;
@@ -34,7 +26,45 @@ private:
     QColor checkedBackground;
     QColor hoverColor;
     QColor checkedColor;
-    QColor bottomColor;
+    QColor lineColor;
+};
+
+class SvgButton: public BasicButton
+{
+    Q_OBJECT
+public:
+    SvgButton(const QSize&, const QString&, QWidget* parent=nullptr);
+    static void SetSVGColor(QDomElement elem, QString color);
+    void initUi();
+protected:
+    void paintEvent(QPaintEvent *);
+private:
+    QSize size;
+    QString path;
+    QDomDocument doc;
+};
+
+class TitleBarTabButton: public BasicButton
+{
+    Q_OBJECT
+public:
+    TitleBarTabButton(QWidget* parent = nullptr);
+    void paintEvent(QPaintEvent *);
+};
+
+class LeftBarTabButton: public BasicButton
+{
+    Q_OBJECT
+public:
+    LeftBarTabButton(QWidget* parent = nullptr);
+    enum ButtonType{
+        History,
+        Collection
+    };
+    void paintEvent(QPaintEvent *);
+    void setButtonType(ButtonType);
+private:
+    QString svg_path;
 };
 
 class PopUpButton: public QWidget
@@ -50,24 +80,5 @@ public:
     void paintEvent(QPaintEvent*);
 private:
     bool isEnter;
-};
-
-class SvgButton: public QPushButton
-{
-    Q_OBJECT
-public:
-    SvgButton(const QSize&, const QString&, QWidget* parent=nullptr);
-protected:
-    void paintEvent(QPaintEvent *);
-    void enterEvent(QEnterEvent *);
-    void leaveEvent(QEvent *);
-    void SetSVGColor(QDomElement elem, QString color);
-private:
-    QSize size;
-    QString path;
-    QColor color;
-    QColor hoverColor;
-    bool isEnter;
-    QDomDocument doc;
 };
 #endif // BUTTONS_H

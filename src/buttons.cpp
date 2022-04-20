@@ -1,51 +1,18 @@
 #include "buttons.h"
 
-TitleBarTabButton::TitleBarTabButton(QWidget* parent)
-    : btnType(AppTop)
+BasicButton::BasicButton(QWidget* parent)
+    : QPushButton(parent)
     , isEnter(false)
-    , color(QColor(116, 116, 128))
+    , color(QColor(90, 90, 100))
     , background(QColor(255, 255, 255))
     , hoverBackground(QColor(255, 255, 255))
     , checkedBackground(QColor(255, 255, 255))
     , hoverColor(QColor(30, 35, 47))
     , checkedColor(ColorStyle::orange)
-    , bottomColor(ColorStyle::orange)
-{
-    setCheckable(true);
-    initUi();
-}
+    , lineColor(ColorStyle::orange)
+{}
 
-void TitleBarTabButton::initUi()
-{
-    if (btnType == AppTop)
-    {
-        color = QColor(90, 90, 100);
-        background = QColor(255, 255, 255);
-        hoverBackground = QColor(255, 255, 255);
-        checkedBackground = QColor(255, 255, 255);
-        hoverColor = QColor(30, 35, 47);
-        checkedColor = ColorStyle::orange;
-        bottomColor = ColorStyle::orange;
-    }
-    else if (btnType == LeftSideBarTop)
-    {
-        color = QColor(138, 138, 138);
-        background = QColor(26, 26, 26);
-        hoverBackground = QColor(26, 26, 26);
-        checkedBackground = QColor(26, 26, 26);
-        hoverColor = QColor(189, 189, 189);
-        checkedColor = QColor(247, 248, 249);
-        bottomColor = QColor(247, 248, 249);
-    }
-}
-
-void TitleBarTabButton::setButtonType(const ButtonType t)
-{
-    btnType = t;
-    initUi();
-}
-
-void TitleBarTabButton::enterEvent(QEnterEvent *e)
+void BasicButton::enterEvent(QEnterEvent *e)
 {
     QPushButton::enterEvent(e);
     setCursor(Qt::PointingHandCursor);
@@ -53,12 +20,20 @@ void TitleBarTabButton::enterEvent(QEnterEvent *e)
     repaint();
 }
 
-void TitleBarTabButton::leaveEvent(QEvent *e)
+void BasicButton::leaveEvent(QEvent *e)
 {
     QPushButton::leaveEvent(e);
     isEnter = false;
     repaint();
 }
+
+
+TitleBarTabButton::TitleBarTabButton(QWidget* parent)
+    : BasicButton(parent)
+{
+    setCheckable(true);
+}
+
 
 void TitleBarTabButton::paintEvent(QPaintEvent* e)
 {
@@ -73,19 +48,10 @@ void TitleBarTabButton::paintEvent(QPaintEvent* e)
     if (this->isChecked())
     {
         QPen pen;
-        pen.setColor(bottomColor);
-        if (btnType == AppTop)
-            pen.setWidth(4);
-        else
-            pen.setWidth(3);
+        pen.setColor(lineColor);
+        pen.setWidth(4);
+        pen.setWidth(3);
 
-        painter.setPen(pen);
-        painter.drawLine(0, height()-2, width(), height()-2);
-    }
-    else if (btnType == LeftSideBarTop)
-    {
-        QPen pen;
-        pen.setColor(color);
         painter.setPen(pen);
         painter.drawLine(0, height()-2, width(), height()-2);
     }
@@ -103,6 +69,93 @@ void TitleBarTabButton::paintEvent(QPaintEvent* e)
     QRectF rect(0, (height() - 20)/2 - 2, width(), 20);
     painter.setFont(font);
     painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter, this->text());
+}
+
+
+LeftBarTabButton::LeftBarTabButton(QWidget* parent)
+    : BasicButton(parent)
+    , svg_path("")
+{
+    setCheckable(true);
+}
+
+void LeftBarTabButton::paintEvent(QPaintEvent* e)
+{
+    QPainter painter(this);
+    // 先处理背景色
+    painter.fillRect(0, 0,width(), height(), background);
+    if (this->isChecked())
+        painter.fillRect(0, 0,width(), height(), checkedBackground);
+    if (isEnter)
+        painter.fillRect(0, 0,width(), height(), hoverBackground);
+    // 再处理底部划线
+    if (this->isChecked())
+    {
+        QPen pen;
+        pen.setColor(lineColor);
+        pen.setWidth(1);
+
+        painter.setPen(pen);
+        painter.drawLine(width() - 2, 0, width() - 2, height());
+        painter.drawLine(0, 0, 0, height());
+    }
+    else
+    {
+        QPen pen;
+        pen.setColor(color);
+        painter.setPen(pen);
+        painter.drawLine(width() - 2, 0, width() - 2, height());
+    }
+    // 处理文字
+    QPen pen;
+    if (this->isChecked())
+        pen.setColor(checkedColor);
+    else if (isEnter)
+        pen.setColor(hoverColor);
+    else
+        pen.setColor(color);
+    painter.setPen(pen);
+    QFont font = this->font();
+    font.setWeight(QFont::Medium);
+    font.setPointSize(6);
+    QRectF rect(0, height() - 23, width(), 25);
+    painter.setFont(font);
+    painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter, this->text());
+
+    // 最后处理图标
+    QSize size(20, 20);
+    QFile file(svg_path);
+    file.open(QIODevice::ReadOnly);
+    QByteArray data = file.readAll();
+    QDomDocument doc;
+    doc.setContent(data);
+    file.close();
+
+    QPixmap* pixmap = new QPixmap(size.width() * 2, size.height() *2);
+    pixmap->fill(Qt::transparent);//设置背景透明
+    QPainter p(pixmap);
+
+    if (isEnter)
+        SvgButton::SetSVGColor(doc.documentElement(), hoverColor.name());
+    else
+        SvgButton::SetSVGColor(doc.documentElement(), color.name());
+    if (isChecked())
+        SvgButton::SetSVGColor(doc.documentElement(), checkedColor.name());
+    QByteArray svg_content = doc.toByteArray();
+    QSvgRenderer *svgRender = new QSvgRenderer(svg_content);
+    svgRender->render(&p);
+
+    QPainter p2(this);
+    p2.drawPixmap((width() - size.width()) / 2 ,(height() - size.height()) / 2 - 6, size.width(), size.height(), *pixmap);
+}
+
+void LeftBarTabButton::setButtonType(ButtonType t)
+{
+    if (t == History)
+        svg_path = ":/resource/svg/history.svg";
+    else if(t == Collection)
+        svg_path = ":/resource/svg/folder.svg";
+    repaint();
 }
 
 
@@ -146,11 +199,9 @@ void PopUpButton::paintEvent(QPaintEvent *)
 }
 
 SvgButton::SvgButton(const QSize& s, const QString& p, QWidget* parent)
-    : size(s)
+    : BasicButton(parent)
+    , size(s)
     , path(p)
-    , color(QColor(90, 90, 100))
-    , hoverColor(QColor(30, 35, 47))
-    , isEnter(false)
 {
     QFile file(path);
     file.open(QIODevice::ReadOnly);
@@ -167,36 +218,15 @@ void SvgButton::paintEvent(QPaintEvent *event)
     QPainter p(pixmap);
 
     if (isEnter)
-    {
         SetSVGColor(doc.documentElement(), hoverColor.name());
-        QByteArray svg_content = doc.toByteArray();
-        QSvgRenderer *svgRender = new QSvgRenderer(svg_content);
-        svgRender->render(&p);
-    } else
-    {
+    else
         SetSVGColor(doc.documentElement(), color.name());
-        QByteArray svg_content = doc.toByteArray();
-        QSvgRenderer *svgRender = new QSvgRenderer(svg_content);
-        svgRender->render(&p);
-    }
+    QByteArray svg_content = doc.toByteArray();
+    QSvgRenderer *svgRender = new QSvgRenderer(svg_content);
+    svgRender->render(&p);
 
     QPainter p2(this);
     p2.drawPixmap((width() - size.width()) / 2 ,(height() - size.height()) / 2, size.width(), size.height(), *pixmap);
-}
-
-void SvgButton::enterEvent(QEnterEvent *e)
-{
-    QPushButton::enterEvent(e);
-    isEnter = true;
-    setCursor(Qt::PointingHandCursor);
-    repaint();
-}
-
-void SvgButton::leaveEvent(QEvent *e)
-{
-    QPushButton::leaveEvent(e);
-    isEnter = false;
-    repaint();
 }
 
 void SvgButton::SetSVGColor(QDomElement elem, QString color)

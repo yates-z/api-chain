@@ -38,6 +38,8 @@ set(PROJECT_SOURCES
         src/log.h
         src/log.cpp
         src/constants.h
+        src/widgets.h
+        src/widgets.cpp
         resource.qrc
         ${TS_FILES}
 )

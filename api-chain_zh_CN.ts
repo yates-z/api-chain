@@ -4,12 +4,12 @@
 <context>
     <name>LeftSideBar</name>
     <message>
-        <location filename="src/requestspage.cpp" line="60"/>
+        <location filename="src/requestspage.cpp" line="64"/>
         <source>HISTORY</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/requestspage.cpp" line="66"/>
+        <location filename="src/requestspage.cpp" line="70"/>
         <source>COLLECTION</source>
         <translation type="unfinished"></translation>
     </message>
