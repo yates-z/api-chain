@@ -81,4 +81,23 @@ public:
 private:
     bool isEnter;
 };
+
+class TextButton : public BasicButton
+{
+    Q_OBJECT
+public:
+    TextButton(QWidget *parent=nullptr);
+    TextButton(QString s, QWidget *parent=nullptr);
+    void setPlain();
+};
+
+class UnFilledPrimaryButton : public BasicButton
+{
+    Q_OBJECT
+public:
+    UnFilledPrimaryButton(QWidget *parent=nullptr);
+    UnFilledPrimaryButton(QString s, QWidget *parent=nullptr);
+    void initUi();
+};
+
 #endif // BUTTONS_H

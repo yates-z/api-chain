@@ -11,6 +11,7 @@
 
 #include "buttons.h"
 #include "widgets.h"
+#include "input.h"
 #include <QDebug>
 
 class HistoryWidget: public QWidget
@@ -20,6 +21,13 @@ public:
     HistoryWidget(QWidget* parent);
     void initUi();
     void setBackground(const QColor c = QColor(255, 255, 255));
+private:
+    QVBoxLayout *layout;
+    FilterInput *searchInput;
+    TextButton *deselectButton;
+    TextButton *removeButton;
+    TextButton *removeAllButton;
+    UnFilledPrimaryButton *saveButton;
 };
 
 class CollectionWidget: public QWidget
@@ -31,6 +39,20 @@ public:
     void setBackground(const QColor c = QColor(255, 255, 255));
 
 };
+
+class RealLeftSideBar: public BorderRadiusWidget
+{
+    Q_OBJECT
+public:
+    RealLeftSideBar(QWidget* parent=nullptr);
+    void paintEvent(QPaintEvent*);
+    void setLinex(int);
+    void setColor(QColor);
+private:
+    int x;
+    QColor color;
+};
+
 
 class LeftSideBar: public QWidget
 {
@@ -44,7 +66,7 @@ public:
     void resizeEvent(QResizeEvent*);
     void setBackground(QColor c = QColor(255, 255, 255));
 private:
-    BorderRadiusWidget* centralWidget;
+    RealLeftSideBar* centralWidget;
     QHBoxLayout* centralWidgetLayout;
 
     QVBoxLayout* layout;

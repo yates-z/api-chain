@@ -29,6 +29,8 @@ set(PROJECT_SOURCES
         src/mainwindow.cpp
         src/buttons.h
         src/buttons.cpp
+        src/input.h
+        src/input.cpp
         src/labels.h
         src/labels.cpp
         src/requestspage.h

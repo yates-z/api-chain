@@ -1,6 +1,13 @@
 #include "requestspage.h"
 
 HistoryWidget::HistoryWidget(QWidget* parent)
+    : QWidget(parent)
+    , layout (new QVBoxLayout(this))
+    , searchInput(new FilterInput(this))
+    , deselectButton(new TextButton(tr("Deselect"), this))
+    , removeButton(new TextButton(tr("Remove"), this))
+    , removeAllButton(new TextButton(tr("Remove all"), this))
+    , saveButton(new UnFilledPrimaryButton(tr("Save to collections"), this))
 {
     initUi();
 }
@@ -8,6 +15,24 @@ HistoryWidget::HistoryWidget(QWidget* parent)
 void HistoryWidget::initUi()
 {
     setBackground();
+    searchInput->setMinimumHeight(28);
+    layout->addWidget(searchInput);
+
+    layout->addSpacing(10);
+    QHBoxLayout *middleBtnLayout = new QHBoxLayout;
+    middleBtnLayout->addWidget(deselectButton);
+    middleBtnLayout->addWidget(removeButton);
+    middleBtnLayout->addWidget(removeAllButton);
+    middleBtnLayout->setContentsMargins(5, 0, 5, 0);
+    layout->addLayout(middleBtnLayout);
+
+
+    layout->addStretch(1);
+    layout->addSpacing(3);
+    layout->addWidget(saveButton);
+    layout->addSpacing(3);
+
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void HistoryWidget::setBackground(const QColor c)
@@ -41,7 +66,7 @@ void CollectionWidget::setBackground(const QColor c)
 LeftSideBar::LeftSideBar(QWidget* parent)
     : QWidget(parent)
     , layout(new QVBoxLayout(this))
-    , centralWidget(new BorderRadiusWidget)
+    , centralWidget(new RealLeftSideBar(this))
     , centralWidgetLayout(new QHBoxLayout(centralWidget))
     , historyBtn(new LeftBarTabButton(centralWidget))
     , collectionBtn(new LeftBarTabButton(centralWidget))
@@ -57,6 +82,7 @@ LeftSideBar::LeftSideBar(QWidget* parent)
 
 void LeftSideBar::initUi()
 {
+    centralWidget->setLinex(buttonWidth);
     layout->addWidget(centralWidget);
     layout->setContentsMargins(15, 30, 0, 30);
 
@@ -81,7 +107,7 @@ void LeftSideBar::initUi()
     topLayout->addStretch(1);
     topLayout->addWidget(historyBtn);
     topLayout->addWidget(collectionBtn);
-    topLayout->addStretch(1);
+    topLayout->addStretch(9);
 
     topLayout->setSpacing(0);
     topLayout->setContentsMargins(0, 0, 0, 0);
@@ -118,7 +144,32 @@ void LeftSideBar::resizeEvent(QResizeEvent* e)
         emit afterHide();
 }
 
+RealLeftSideBar::RealLeftSideBar(QWidget* parent)
+    : BorderRadiusWidget(parent)
+    , color(QColor(145, 145, 145))
+{}
 
+void RealLeftSideBar::setLinex(int x)
+{
+    this->x = x;
+    repaint();
+}
+
+void RealLeftSideBar::setColor(QColor color)
+{
+    this->color = color;
+    repaint();
+}
+
+void RealLeftSideBar::paintEvent(QPaintEvent* event)
+{
+    BorderRadiusWidget::paintEvent(event);
+    QPen pen;
+    pen.setColor(color);
+    QPainter painter(this);
+    painter.setPen(pen);
+    painter.drawLine(x - 1, 0, x - 1, height());
+}
 
 RequestsContentPage::RequestsContentPage(QWidget* parent)
     : QWidget(parent)

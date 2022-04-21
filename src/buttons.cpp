@@ -3,13 +3,13 @@
 BasicButton::BasicButton(QWidget* parent)
     : QPushButton(parent)
     , isEnter(false)
-    , color(QColor(90, 90, 100))
-    , background(QColor(255, 255, 255))
-    , hoverBackground(QColor(255, 255, 255))
-    , checkedBackground(QColor(255, 255, 255))
-    , hoverColor(QColor(30, 35, 47))
-    , checkedColor(ColorStyle::orange)
-    , lineColor(ColorStyle::orange)
+    , color(ColorStyle::currentFontColor)
+    , background(ColorStyle::currentBackground)
+    , hoverBackground(ColorStyle::white)
+    , checkedBackground(ColorStyle::white)
+    , hoverColor(ColorStyle::currentHoverColor)
+    , checkedColor(ColorStyle::currentFocusColor)
+    , lineColor(ColorStyle::currentFocusColor)
 {}
 
 void BasicButton::enterEvent(QEnterEvent *e)
@@ -89,22 +89,22 @@ void LeftBarTabButton::paintEvent(QPaintEvent* e)
     if (isEnter)
         painter.fillRect(0, 0,width(), height(), hoverBackground);
     // 再处理底部划线
+    int _width = 1;
     if (this->isChecked())
     {
         QPen pen;
         pen.setColor(lineColor);
-        pen.setWidth(1);
-
+        pen.setWidth(_width);
         painter.setPen(pen);
-        painter.drawLine(width() - 2, 0, width() - 2, height());
-        painter.drawLine(0, 0, 0, height());
+        painter.drawLine(_width, 0, _width, height());
+        painter.drawLine(width() - _width, 0, width() - _width, height());
     }
     else
     {
         QPen pen;
-        pen.setColor(color);
+        pen.setColor(QColor(145,145,145));
         painter.setPen(pen);
-        painter.drawLine(width() - 2, 0, width() - 2, height());
+        painter.drawLine(width() - _width, 0, width() - _width, height());
     }
     // 处理文字
     QPen pen;
@@ -235,4 +235,46 @@ void SvgButton::SetSVGColor(QDomElement elem, QString color)
     if (elem.tagName().compare("svg") == 0)
 //        QString before_color = elem.attribute("stroke");
         elem.setAttribute("stroke", color);
+}
+
+
+TextButton::TextButton(QWidget *parent)
+    : BasicButton(parent)
+{
+    setPlain();
+}
+
+TextButton::TextButton(QString s, QWidget *parent)
+    : BasicButton(parent)
+{
+    this->setText(s);
+    setPlain();
+}
+
+void TextButton::setPlain()
+{
+    this->setFlat(true);
+    this->setStyleSheet(QString("QPushButton {color: %1; border:none; background: transparent;}"
+                        "QPushButton::hover {color: %2;background: transparent;}").arg(color.name(), hoverColor.name()));
+}
+
+UnFilledPrimaryButton::UnFilledPrimaryButton(QWidget* parent)
+    : BasicButton(parent)
+{
+    initUi();
+}
+
+UnFilledPrimaryButton::UnFilledPrimaryButton(QString s, QWidget* parent)
+    : BasicButton(parent)
+{
+    initUi();
+    setText(s);
+}
+
+void UnFilledPrimaryButton::initUi()
+{
+    this->setStyleSheet(
+                QString("UnFilledPrimaryButton{ color: %1; border: 1px solid %1; margin: 0px 5px 0px 5px; border-radius: 8px;}"
+                        ".UnFilledPrimaryButton:hover{ color: %2; border: 1px solid %1; background-color: %1;}").arg(
+                    ColorStyle::currentFocusColor.name(), ColorStyle::white.name()));
 }

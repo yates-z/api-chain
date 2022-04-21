@@ -3,5 +3,6 @@
         <file>resource/svg/settings.svg</file>
         <file>resource/svg/folder.svg</file>
         <file>resource/svg/history.svg</file>
+        <file>resource/svg/search.svg</file>
     </qresource>
 </RCC>
