@@ -45,6 +45,11 @@ void HistoryWidget::setBackground(const QColor c)
 
 
 CollectionWidget::CollectionWidget(QWidget* parent)
+    : QWidget(parent)
+    , layout (new QVBoxLayout(this))
+    , searchInput(new FilterInput(this))
+    , newButton(new TextButton(tr("New"), this))
+    , removeAllButton(new TextButton(tr("Remove all"), this))
 {
     initUi();
 }
@@ -52,6 +57,19 @@ CollectionWidget::CollectionWidget(QWidget* parent)
 void CollectionWidget::initUi()
 {
     setBackground();
+    searchInput->setMinimumHeight(28);
+    layout->addWidget(searchInput);
+
+    layout->addSpacing(10);
+    QHBoxLayout *middleBtnLayout = new QHBoxLayout;
+    middleBtnLayout->addWidget(newButton);
+    middleBtnLayout->addWidget(removeAllButton);
+    middleBtnLayout->setContentsMargins(5, 0, 5, 0);
+    layout->addLayout(middleBtnLayout);
+
+    layout->addStretch(1);
+
+    layout->setContentsMargins(0, 0, 0, 0);
 }
 
 void CollectionWidget::setBackground(const QColor c)
@@ -67,10 +85,10 @@ LeftSideBar::LeftSideBar(QWidget* parent)
     : QWidget(parent)
     , layout(new QVBoxLayout(this))
     , centralWidget(new RealLeftSideBar(this))
-    , centralWidgetLayout(new QHBoxLayout(centralWidget))
+    , centralWidgetLayout(new QVBoxLayout(centralWidget))
     , historyBtn(new LeftBarTabButton(centralWidget))
     , collectionBtn(new LeftBarTabButton(centralWidget))
-    , buttonWidth(55)
+    , buttonWidth(45)
     , btnGroup(new QButtonGroup(centralWidget))
     , tabWidget(new QStackedWidget(centralWidget))
     , historyWidget(new HistoryWidget(centralWidget))
@@ -88,14 +106,14 @@ void LeftSideBar::initUi()
 
     // history button
     historyBtn->setText(tr("HISTORY"));
-    historyBtn->setFixedSize(buttonWidth, buttonWidth);
+    historyBtn->setFixedHeight(buttonWidth);
     historyBtn->setButtonType(LeftBarTabButton::History);
     historyBtn->setChecked(true);
 
     // collection button
     collectionBtn->setText(tr("COLLECTION"));
     collectionBtn->setButtonType(LeftBarTabButton::Collection);
-    collectionBtn->setFixedSize(buttonWidth, buttonWidth);
+    collectionBtn->setFixedHeight(buttonWidth);
 
     // add buttons to button group
     btnGroup->addButton(historyBtn);
@@ -103,23 +121,23 @@ void LeftSideBar::initUi()
     btnGroup->setExclusive(true);
 
     // add buttons to layout
-    QVBoxLayout *topLayout = new QVBoxLayout();
-    topLayout->addStretch(1);
+    QHBoxLayout *topLayout = new QHBoxLayout;
+    topLayout->addSpacing(8);
     topLayout->addWidget(historyBtn);
     topLayout->addWidget(collectionBtn);
-    topLayout->addStretch(9);
+    topLayout->addSpacing(8);
 
     topLayout->setSpacing(0);
     topLayout->setContentsMargins(0, 0, 0, 0);
     centralWidgetLayout->addLayout(topLayout);
+    centralWidgetLayout->addSpacing(8);
 
     tabWidget->insertWidget(0, historyWidget);
     tabWidget->insertWidget(1, collectionWidget);
-    collectionWidget->setBackground(Qt::red);
     tabWidget->setCurrentIndex(0);
     centralWidgetLayout->addWidget(tabWidget);
     centralWidgetLayout->setSpacing(0);
-    centralWidgetLayout->setContentsMargins(0, 8, 0, 8);
+    centralWidgetLayout->setContentsMargins(0, 0, 0, 8);
 }
 
 void LeftSideBar::initSignals()
@@ -168,7 +186,7 @@ void RealLeftSideBar::paintEvent(QPaintEvent* event)
     pen.setColor(color);
     QPainter painter(this);
     painter.setPen(pen);
-    painter.drawLine(x - 1, 0, x - 1, height());
+//    painter.drawLine(0, x, width(), x);
 }
 
 RequestsContentPage::RequestsContentPage(QWidget* parent)

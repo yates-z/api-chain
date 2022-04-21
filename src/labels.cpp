@@ -1,6 +1,7 @@
 #include "labels.h"
 
 SplitLine::SplitLine(QWidget* parent, const QColor color)
+    : QLabel(parent)
 {
     this->setFixedWidth(2);
     QPalette p;
@@ -15,6 +16,7 @@ void SplitLine::setHeight(int h)
 }
 
 TitleLabel::TitleLabel(QWidget *parent, const QString& text, const QColor color)
+    : QLabel(parent)
 {
     // 设置字体
     QFont font;

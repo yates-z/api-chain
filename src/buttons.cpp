@@ -89,23 +89,25 @@ void LeftBarTabButton::paintEvent(QPaintEvent* e)
     if (isEnter)
         painter.fillRect(0, 0,width(), height(), hoverBackground);
     // 再处理底部划线
-    int _width = 1;
+    int _margin = 1;
     if (this->isChecked())
     {
         QPen pen;
         pen.setColor(lineColor);
-        pen.setWidth(_width);
+        pen.setWidth(_margin);
         painter.setPen(pen);
-        painter.drawLine(_width, 0, _width, height());
-        painter.drawLine(width() - _width, 0, width() - _width, height());
+        painter.drawLine(_margin, _margin, _margin, height() - _margin);
+        painter.drawLine(_margin, height() - _margin, width() - _margin, height() - _margin);
+        painter.drawLine(width() - _margin, _margin, width() - _margin, height() - _margin);
+        painter.drawLine(_margin, _margin, width() - _margin, _margin);
     }
-    else
-    {
-        QPen pen;
-        pen.setColor(QColor(145,145,145));
-        painter.setPen(pen);
-        painter.drawLine(width() - _width, 0, width() - _width, height());
-    }
+//    else
+//    {
+//        QPen pen;
+//        pen.setColor(QColor(145,145,145));
+//        painter.setPen(pen);
+//        painter.drawLine(width() - _margin, 0, width() - _margin, height());
+//    }
     // 处理文字
     QPen pen;
     if (this->isChecked())

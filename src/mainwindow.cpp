@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 
 TitleBar::TitleBar(QWidget *parent)
-    : layout(new QHBoxLayout(this))
+    : QWidget(parent)
+    , layout(new QHBoxLayout(this))
     , logo(new QLabel(this))
     , title(new TitleLabel(this, tr("API Chain")))
     , btnGroup(new QButtonGroup(this))
@@ -78,7 +79,8 @@ void TitleBar::initUi()
 
 
 BaseContent::BaseContent(QWidget *parent)
-    : requestsPage(new RequestsPage(this))
+    : QStackedWidget(parent)
+    , requestsPage(new RequestsPage(this))
     , chainPage(new ChainPage(this))
 {
     initUi();

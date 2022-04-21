@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>CollectionWidget</name>
+    <message>
+        <location filename="src/requestspage.cpp" line="51"/>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/requestspage.cpp" line="52"/>
+        <source>Remove all</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HistoryWidget</name>
     <message>
         <location filename="src/requestspage.cpp" line="7"/>
@@ -27,12 +40,12 @@
 <context>
     <name>LeftSideBar</name>
     <message>
-        <location filename="src/requestspage.cpp" line="90"/>
+        <location filename="src/requestspage.cpp" line="108"/>
         <source>HISTORY</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/requestspage.cpp" line="96"/>
+        <location filename="src/requestspage.cpp" line="114"/>
         <source>COLLECTION</source>
         <translation type="unfinished"></translation>
     </message>
@@ -40,17 +53,17 @@
 <context>
     <name>TitleBar</name>
     <message>
-        <location filename="src/mainwindow.cpp" line="6"/>
+        <location filename="src/mainwindow.cpp" line="7"/>
         <source>API Chain</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="48"/>
+        <location filename="src/mainwindow.cpp" line="49"/>
         <source>Requests</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mainwindow.cpp" line="54"/>
+        <location filename="src/mainwindow.cpp" line="55"/>
         <source>Chain</source>
         <translation type="unfinished"></translation>
     </message>

@@ -37,7 +37,11 @@ public:
     CollectionWidget(QWidget* parent);
     void initUi();
     void setBackground(const QColor c = QColor(255, 255, 255));
-
+private:
+    QVBoxLayout *layout;
+    FilterInput *searchInput;
+    TextButton *newButton;
+    TextButton *removeAllButton;
 };
 
 class RealLeftSideBar: public BorderRadiusWidget
@@ -67,7 +71,7 @@ public:
     void setBackground(QColor c = QColor(255, 255, 255));
 private:
     RealLeftSideBar* centralWidget;
-    QHBoxLayout* centralWidgetLayout;
+    QVBoxLayout* centralWidgetLayout;
 
     QVBoxLayout* layout;
     LeftBarTabButton* historyBtn;
