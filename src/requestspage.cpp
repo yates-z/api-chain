@@ -84,7 +84,7 @@ void CollectionWidget::setBackground(const QColor c)
 LeftSideBar::LeftSideBar(QWidget* parent)
     : QWidget(parent)
     , layout(new QVBoxLayout(this))
-    , centralWidget(new RealLeftSideBar(this))
+    , centralWidget(new BorderRadiusWidget(this))
     , centralWidgetLayout(new QVBoxLayout(centralWidget))
     , historyBtn(new LeftBarTabButton(centralWidget))
     , collectionBtn(new LeftBarTabButton(centralWidget))
@@ -100,7 +100,6 @@ LeftSideBar::LeftSideBar(QWidget* parent)
 
 void LeftSideBar::initUi()
 {
-    centralWidget->setLinex(buttonWidth);
     layout->addWidget(centralWidget);
     layout->setContentsMargins(15, 30, 0, 30);
 
@@ -162,37 +161,226 @@ void LeftSideBar::resizeEvent(QResizeEvent* e)
         emit afterHide();
 }
 
-RealLeftSideBar::RealLeftSideBar(QWidget* parent)
+
+RequestHeader::RequestHeader(QWidget* parent)
+    : QWidget(parent)
+    , layout(new QVBoxLayout(this))
+    , headerTabHeight(10)
+    , comboBox(new QComboBox(this))
+    , bottomContent(new QStackedWidget(this))
+    , editor(new QTextEdit(this))
+{
+    QHBoxLayout* topLayout = new QHBoxLayout;
+    topLayout->addWidget(new QLabel("HEADERS"), Qt::AlignLeft);
+    topLayout->addStretch(1);
+    comboBox->addItems({"Form", "Raw"});
+    topLayout->addWidget(comboBox, Qt::AlignRight);
+
+    layout->addLayout(topLayout);
+    SplitLine *splitline = new SplitLine(1, width());
+    splitline->setOrientation(Qt::Horizontal);
+    layout->addWidget(splitline);
+
+    layout->addSpacing(10);
+
+    bottomContent->addWidget(editor);
+    layout->addWidget(bottomContent);
+
+    layout->setContentsMargins(0, 0, 30, 15);
+    layout->setSpacing(0);
+}
+
+
+RequestBody::RequestBody(QWidget* parent)
+    : QWidget(parent)
+    , layout(new QVBoxLayout(this))
+    , headerTabHeight(10)
+    , comboBox(new QComboBox(this))
+    , bottomContent(new QStackedWidget(this))
+    , editor(new QTextEdit(this))
+{
+    QHBoxLayout* topLayout = new QHBoxLayout;
+    topLayout->addWidget(new QLabel("BODY"), Qt::AlignLeft);
+    topLayout->addStretch(1);
+    comboBox->addItems({"Text", "Form", "File"});
+    topLayout->addWidget(comboBox, Qt::AlignRight);
+
+    layout->addLayout(topLayout);
+    SplitLine *splitline = new SplitLine(1, width());
+    splitline->setOrientation(Qt::Horizontal);
+    layout->addWidget(splitline);
+
+    layout->addSpacing(10);
+
+    bottomContent->addWidget(editor);
+    layout->addWidget(bottomContent);
+
+    layout->setContentsMargins(30, 0, 0, 15);
+    layout->setSpacing(0);
+}
+
+
+RequestPart::RequestPart(QWidget* parent)
     : BorderRadiusWidget(parent)
-    , color(QColor(145, 145, 145))
-{}
-
-void RealLeftSideBar::setLinex(int x)
+    , layout(new QVBoxLayout(this))
+    , methodSelector(new QComboBox(this))
+    , urlInput(new FilterInput(this))
+    , sendButton(new QPushButton(this))
+    , requestHeader(new RequestHeader(this))
+    , requestBody(new RequestBody(this))
 {
-    this->x = x;
-    repaint();
+    initUi();
 }
 
-void RealLeftSideBar::setColor(QColor color)
+void RequestPart::initUi()
 {
-    this->color = color;
-    repaint();
+    QGridLayout *topLayout = new QGridLayout;
+    topLayout->addWidget(new QLabel("METHOD"), 0, 0);
+    topLayout->addWidget(new QLabel("SCHEME :// HOST [ \":\" PORT ] [ PATH [ \"?\" QUERY ]]"), 0, 1);
+
+    methodSelector->addItems({"GET", "POST", "PATCH", "PUT", "DELETE", "HEAD", "OPTIONS"});
+    topLayout->addWidget(methodSelector, 1, 0);
+
+    urlInput->setFixedHeight(28);
+    topLayout->addWidget(urlInput, 1, 1);
+
+    sendButton->setText(tr("Send"));
+    topLayout->addWidget(sendButton, 1, 2);
+    layout->addLayout(topLayout);
+
+    topLayout->addWidget(new QLabel("length:  byte(s)"), 2, 1, Qt::AlignRight);
+
+    QSplitter* splitter = new QSplitter(this);
+    splitter->setHandleWidth(1);
+    splitter->addWidget(requestHeader);
+    splitter->addWidget(requestBody);
+
+    layout->addWidget(splitter);
+    layout->setContentsMargins(35, 35, 35, 35);
 }
 
-void RealLeftSideBar::paintEvent(QPaintEvent* event)
+
+ResponseHeader::ResponseHeader(QWidget* parent)
+    :QWidget(parent)
+    , layout(new QVBoxLayout(this))
+    , headerTabHeight(10)
+    , comboBox(new QComboBox(this))
+    , bottomContent(new QStackedWidget(this))
+    , editor(new QTextEdit(this))
 {
-    BorderRadiusWidget::paintEvent(event);
-    QPen pen;
-    pen.setColor(color);
-    QPainter painter(this);
-    painter.setPen(pen);
-//    painter.drawLine(0, x, width(), x);
+    QHBoxLayout* topLayout = new QHBoxLayout;
+    topLayout->addWidget(new QLabel("HEADERS"), Qt::AlignLeft);
+    topLayout->addStretch(1);
+    comboBox->addItems({"Form", "Raw"});
+    topLayout->addWidget(comboBox, Qt::AlignRight);
+
+    layout->addLayout(topLayout);
+    SplitLine *splitline = new SplitLine(1, width());
+    splitline->setOrientation(Qt::Horizontal);
+    layout->addWidget(splitline);
+
+    layout->addSpacing(10);
+
+    bottomContent->addWidget(editor);
+    layout->addWidget(bottomContent);
+
+    layout->setContentsMargins(0, 0, 30, 15);
+    layout->setSpacing(0);
 }
+
+
+ResponseBody::ResponseBody(QWidget* parent)
+    :QWidget(parent)
+    , layout(new QVBoxLayout(this))
+    , headerTabHeight(10)
+    , comboBox(new QComboBox(this))
+    , bottomContent(new QStackedWidget(this))
+    , editor(new QTextEdit(this))
+{
+    QHBoxLayout* topLayout = new QHBoxLayout;
+    topLayout->addWidget(new QLabel("BODY"), Qt::AlignLeft);
+    topLayout->addStretch(1);
+    comboBox->addItems({"Text", "Form", "File"});
+    topLayout->addWidget(comboBox, Qt::AlignRight);
+
+    layout->addLayout(topLayout);
+    SplitLine *splitline = new SplitLine(1, width());
+    splitline->setOrientation(Qt::Horizontal);
+    layout->addWidget(splitline);
+
+    layout->addSpacing(10);
+
+    bottomContent->addWidget(editor);
+    layout->addWidget(bottomContent);
+
+    layout->setContentsMargins(30, 0, 0, 15);
+    layout->setSpacing(0);
+}
+
+
+ResponsePart::ResponsePart(QWidget* parent)
+    : BorderRadiusWidget(parent)
+    , titleLabel(new QLabel(tr("Response")))
+    , infoLabel(new QLabel(tr("Not available, a request has not been sent yet.")))
+    , splitter(new QSplitter(this))
+    , responseHeader(new ResponseHeader(this))
+    , responseBody(new ResponseBody(this))
+{
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(titleLabel);
+    layout->addWidget(infoLabel);
+
+
+    splitter->setHandleWidth(1);
+    splitter->addWidget(responseHeader);
+    splitter->addWidget(responseBody);
+    layout->addWidget(splitter);
+
+}
+
 
 RequestsContentPage::RequestsContentPage(QWidget* parent)
     : QWidget(parent)
-{}
+    , layout(new QVBoxLayout(this))
+    , requestPart(new RequestPart(this))
+    , responsePart(new ResponsePart(this))
+{
+    initUi();
+}
 
+void RequestsContentPage::initUi()
+{
+    layout->addWidget(requestPart);
+    layout->addSpacing(10);
+    layout->addWidget(responsePart);
+    layout->setContentsMargins(15, 30, 15, 30);
+}
+
+void RequestsContentPage::rotate()
+{
+    QList<QBoxLayout::Direction> directList{
+        QBoxLayout::Direction::TopToBottom,
+        QBoxLayout::Direction::LeftToRight,
+        QBoxLayout::Direction::BottomToTop,
+        QBoxLayout::Direction::RightToLeft,
+        QBoxLayout::Direction::TopToBottom,
+    };
+    try {
+        for (int index = 0; index < directList.count(); index++)
+        {
+            if (layout->direction() == directList[index])
+            {
+                layout->setDirection(directList[index + 1]);
+                emit rotated(directList[index + 1]);
+                break;
+            }
+
+        }
+    }  catch (...) {
+        layout->setDirection(QBoxLayout::Direction::TopToBottom);
+        emit rotated(QBoxLayout::Direction::TopToBottom);
+    }
+}
 
 RequestsPage::RequestsPage(QWidget* parent)
     : QWidget(parent)
@@ -212,6 +400,7 @@ void RequestsPage::initUi()
     leftSideBtn->setFixedWidth(12);
     layout->addWidget(leftSideBtn);
 
+    _requestsPage->setHandleWidth(1);
     _requestsPage->insertWidget(0, leftSideBar);
     _requestsPage->insertWidget(1, requestContentPage);
     // 会自己剪裁

@@ -41,8 +41,8 @@ void TitleBar::initUi()
     layout->addLayout(leftLayout, 1);
 
     // 分割线
-    SplitLine* splitLine = new SplitLine(this, QColor(230, 230, 230));
-    splitLine->setHeight(fixedHeight * 0.6);
+    SplitLine* splitLine = new SplitLine(2, fixedHeight * 0.6, QColor(230, 230, 230), this);
+    splitLine->setOrientation(Qt::Vertical);
     middleLayout->addWidget(splitLine);
 
     // tab
@@ -57,8 +57,8 @@ void TitleBar::initUi()
     middleLayout->addWidget(apiChainButton);
 
     // 分割线
-    SplitLine* splitLine2 = new SplitLine(this, QColor(230, 230, 230));
-    splitLine2->setHeight(fixedHeight * 0.6);
+    SplitLine* splitLine2 = new SplitLine(2, fixedHeight * 0.6, QColor(230, 230, 230), this);
+    splitLine2->setOrientation(Qt::Vertical);
     middleLayout->addWidget(splitLine2);
 
     layout->addLayout(middleLayout, 1);

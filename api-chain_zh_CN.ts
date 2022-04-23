@@ -40,13 +40,34 @@
 <context>
     <name>LeftSideBar</name>
     <message>
-        <location filename="src/requestspage.cpp" line="108"/>
+        <location filename="src/requestspage.cpp" line="107"/>
         <source>HISTORY</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/requestspage.cpp" line="114"/>
+        <location filename="src/requestspage.cpp" line="113"/>
         <source>COLLECTION</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RequestPart</name>
+    <message>
+        <location filename="src/requestspage.cpp" line="247"/>
+        <source>Send</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ResponsePart</name>
+    <message>
+        <location filename="src/requestspage.cpp" line="323"/>
+        <source>Response</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/requestspage.cpp" line="324"/>
+        <source>Not available, a request has not been sent yet.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

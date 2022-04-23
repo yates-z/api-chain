@@ -1,18 +1,45 @@
 #include "labels.h"
 
-SplitLine::SplitLine(QWidget* parent, const QColor color)
+SplitLine::SplitLine(int width, int length, const QColor color, QWidget* parent)
     : QLabel(parent)
+    , w(width)
+    , length(length)
+    , color(color)
+    , orientation(Qt::Orientation::Horizontal)
 {
-    this->setFixedWidth(2);
-    QPalette p;
-    p.setColor(QPalette::Window, color);
-    this->setAutoFillBackground(true);
-    this->setPalette(p);
+//    this->setFixedWidth(w);
+//    QPalette p;
+//    p.setColor(QPalette::Window, color);
+//    this->setAutoFillBackground(true);
+//    this->setPalette(p);
 }
 
-void SplitLine::setHeight(int h)
+void SplitLine::setWidth(int w)
 {
-    this->setFixedHeight(h);
+    if (orientation == Qt::Orientation::Horizontal)
+        this->setFixedWidth(length);
+    else
+        this->setFixedHeight(length);
+}
+
+void SplitLine::setOrientation(Qt::Orientation orientation)
+{
+    if (orientation == Qt::Orientation::Horizontal)
+    {
+        this->setFixedHeight(w);
+        QPalette p;
+        p.setColor(QPalette::Window, color);
+        this->setAutoFillBackground(true);
+        this->setPalette(p);
+    }
+    else
+    {
+        this->setFixedWidth(w);
+        QPalette p;
+        p.setColor(QPalette::Window, color);
+        this->setAutoFillBackground(true);
+        this->setPalette(p);
+    }
 }
 
 TitleLabel::TitleLabel(QWidget *parent, const QString& text, const QColor color)

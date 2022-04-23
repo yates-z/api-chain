@@ -8,10 +8,15 @@
 #include <QStackedWidget>
 #include <QButtonGroup>
 #include <QSysInfo>
+#include <QList>
+#include <QLabel>
+#include <QComboBox>
+#include <QTextEdit>
 
 #include "buttons.h"
 #include "widgets.h"
 #include "input.h"
+#include "labels.h"
 #include <QDebug>
 
 class HistoryWidget: public QWidget
@@ -44,20 +49,8 @@ private:
     TextButton *removeAllButton;
 };
 
-class RealLeftSideBar: public BorderRadiusWidget
-{
-    Q_OBJECT
-public:
-    RealLeftSideBar(QWidget* parent=nullptr);
-    void paintEvent(QPaintEvent*);
-    void setLinex(int);
-    void setColor(QColor);
-private:
-    int x;
-    QColor color;
-};
 
-
+// 侧边栏
 class LeftSideBar: public QWidget
 {
     Q_OBJECT
@@ -70,7 +63,7 @@ public:
     void resizeEvent(QResizeEvent*);
     void setBackground(QColor c = QColor(255, 255, 255));
 private:
-    RealLeftSideBar* centralWidget;
+    BorderRadiusWidget* centralWidget;
     QVBoxLayout* centralWidgetLayout;
 
     QVBoxLayout* layout;
@@ -83,15 +76,113 @@ private:
     CollectionWidget* collectionWidget;
 };
 
+class RequestHeader: public QWidget
+{
+    Q_OBJECT
+public:
+    RequestHeader(QWidget* parent);
+private:
+    QVBoxLayout* layout;
+    int headerTabHeight;
+    QComboBox* comboBox;
+    QStackedWidget* bottomContent;
+    QTextEdit* editor;
+};
+
+class RequestBody: public QWidget
+{
+    Q_OBJECT
+public:
+    RequestBody(QWidget* parent);
+private:
+    QVBoxLayout* layout;
+    int headerTabHeight;
+    QComboBox* comboBox;
+    QStackedWidget* bottomContent;
+    // 输入框
+    QTextEdit* editor;
+};
+
+// 请求部分，包括header、body等
+class RequestPart: public BorderRadiusWidget
+{
+    Q_OBJECT
+public:
+    RequestPart(QWidget* parent=nullptr);
+    void initUi();
+private:
+    QVBoxLayout* layout;
+    // http method selector
+    QComboBox* methodSelector;
+    // url input
+    FilterInput* urlInput;
+    // send button
+    QPushButton* sendButton;
+    // header
+    RequestHeader* requestHeader;
+    // body
+    RequestBody* requestBody;
+};
+
+
+class ResponseHeader: public QWidget
+{
+    Q_OBJECT
+public:
+    ResponseHeader(QWidget* parent);
+private:
+    QVBoxLayout* layout;
+    int headerTabHeight;
+    QComboBox* comboBox;
+    QStackedWidget* bottomContent;
+    QTextEdit* editor;
+};
+
+class ResponseBody: public QWidget
+{
+    Q_OBJECT
+public:
+    ResponseBody(QWidget* parent);
+private:
+    QVBoxLayout* layout;
+    int headerTabHeight;
+    QComboBox* comboBox;
+    QStackedWidget* bottomContent;
+    // 输入框
+    QTextEdit* editor;
+};
+
+// 返回部分，包括返回结果、状态码、耗时等
+class ResponsePart: public BorderRadiusWidget
+{
+    Q_OBJECT
+public:
+    ResponsePart(QWidget* parent=nullptr);
+private:
+    QLabel* titleLabel;
+    QLabel* infoLabel;
+    QSplitter* splitter;
+    ResponseHeader* responseHeader;
+    ResponseBody* responseBody;
+};
+
 
 class RequestsContentPage: public QWidget
 {
     Q_OBJECT
+signals:
+    void rotated(QBoxLayout::Direction);
 public:
     RequestsContentPage(QWidget* parent=nullptr);
+    void initUi();
+    void rotate();
+private:
+    QVBoxLayout* layout;
+    RequestPart* requestPart;
+    ResponsePart* responsePart;
 };
 
-
+// requests部分的基础部件
 class RequestsPage: public QWidget
 {
     Q_OBJECT

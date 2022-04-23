@@ -3,13 +3,20 @@
 
 #include <QLabel>
 #include <QPalette>
+#include "constants.h"
 
 class SplitLine: public QLabel
 {
     Q_OBJECT
 public:
-    SplitLine(QWidget* parent = nullptr, const QColor color = Qt::white);
-    void setHeight(int h);
+    SplitLine(int width, int length, const QColor color = ColorStyle::currentLineColor, QWidget* parent = nullptr);
+    void setWidth(int w);
+    void setOrientation(Qt::Orientation);
+private:
+    int w;
+    int length;
+    QColor color;
+    Qt::Orientation orientation;
 };
 
 

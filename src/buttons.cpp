@@ -96,10 +96,10 @@ void LeftBarTabButton::paintEvent(QPaintEvent* e)
         pen.setColor(lineColor);
         pen.setWidth(_margin);
         painter.setPen(pen);
-        painter.drawLine(_margin, _margin, _margin, height() - _margin);
+//        painter.drawLine(_margin, _margin, _margin, height() - _margin);
         painter.drawLine(_margin, height() - _margin, width() - _margin, height() - _margin);
-        painter.drawLine(width() - _margin, _margin, width() - _margin, height() - _margin);
-        painter.drawLine(_margin, _margin, width() - _margin, _margin);
+//        painter.drawLine(width() - _margin, _margin, width() - _margin, height() - _margin);
+//        painter.drawLine(_margin, _margin, width() - _margin, _margin);
     }
 //    else
 //    {
