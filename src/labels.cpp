@@ -14,13 +14,13 @@ SplitLine::SplitLine(int width, int length, const QColor color, QWidget* parent)
 //    this->setPalette(p);
 }
 
-void SplitLine::setWidth(int w)
-{
-    if (orientation == Qt::Orientation::Horizontal)
-        this->setFixedWidth(length);
-    else
-        this->setFixedHeight(length);
-}
+//void SplitLine::setLength(int w)
+//{
+//    if (orientation == Qt::Orientation::Horizontal)
+//        this->setFixedWidth(length);
+//    else
+//        this->setFixedHeight(length);
+//}
 
 void SplitLine::setOrientation(Qt::Orientation orientation)
 {
@@ -31,6 +31,7 @@ void SplitLine::setOrientation(Qt::Orientation orientation)
         p.setColor(QPalette::Window, color);
         this->setAutoFillBackground(true);
         this->setPalette(p);
+        this->setFixedWidth(length);
     }
     else
     {
@@ -39,6 +40,7 @@ void SplitLine::setOrientation(Qt::Orientation orientation)
         p.setColor(QPalette::Window, color);
         this->setAutoFillBackground(true);
         this->setPalette(p);
+        this->setFixedHeight(length);
     }
 }
 

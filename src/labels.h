@@ -10,7 +10,7 @@ class SplitLine: public QLabel
     Q_OBJECT
 public:
     SplitLine(int width, int length, const QColor color = ColorStyle::currentLineColor, QWidget* parent = nullptr);
-    void setWidth(int w);
+//    void setLength(int w);
     void setOrientation(Qt::Orientation);
 private:
     int w;
