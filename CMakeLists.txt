@@ -12,8 +12,9 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
-find_package(Qt6 COMPONENTS SvgWidgets Xml REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools svgwidgets REQUIRED)
+find_package(Qt6 COMPONENTS SvgWidgets Xml REQUIRED)
+find_package(Qt6 COMPONENTS Network REQUIRED)
 
 set(TS_FILES api-chain_zh_CN.ts)
 
@@ -42,6 +43,8 @@ set(PROJECT_SOURCES
         src/constants.h
         src/widgets.h
         src/widgets.cpp
+        src/network.h
+        src/network.cpp
         resource.qrc
         ${TS_FILES}
 )
@@ -73,7 +76,8 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(api-chain PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::SvgWidgets Qt6::Xml)
+target_link_libraries(api-chain PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::SvgWidgets Qt6::Xml Qt6::Network)
+
 
 set_target_properties(api-chain PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
