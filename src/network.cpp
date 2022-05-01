@@ -1,7 +1,62 @@
 #include "network.h"
 
+BaseHttpResponse::BaseHttpResponse()
+{}
+
 BaseHttpRequest::BaseHttpRequest()
 {}
+
+
+QtHttpResponse::QtHttpResponse(QNetworkReply* reply)
+{
+    this->reply = reply;
+}
+
+QtHttpResponse::~QtHttpResponse()
+{
+    delete reply;
+}
+
+std::ostream& operator<< (std::ostream& os, const QtHttpResponse& p)
+{
+    os << QString("<Qt Network Response [%1]>").arg(p.status_code).toStdString();
+    return os;
+}
+
+bool QtHttpResponse::ok()
+{
+    return true;
+}
+
+void QtHttpResponse::raise_for_status()
+{}
+
+bool QtHttpResponse::is_redirect()
+{
+    return true;
+}
+
+bool QtHttpResponse::is_permanent_redirect()
+{
+    return true;
+}
+
+QByteArray QtHttpResponse::content()
+{
+    return "";
+}
+
+QJsonDocument QtHttpResponse::json()
+{
+    return {};
+}
+
+QMultiMap<QString, QString> QtHttpResponse::links()
+{
+    return {};
+}
+
+
 
 QtHttpRequest::QtHttpRequest()
     : manager(new QNetworkAccessManager)
@@ -20,30 +75,39 @@ std::ostream& operator<< (std::ostream& os, const QtHttpRequest& p)
     return os;
 }
 
-void QtHttpRequest::get(QString url, QMap<QString, QString> params, QMap<QString, QString> headers, QByteArray files, QByteArray data, QString auth, QMap<QString, QString> cookies, QString json)
+BaseHttpResponse* QtHttpRequest::get(QString url, QMap<QString, QString> params, QMultiMap<QString, QString> headers, QByteArray files, QByteArray data, QString auth, QMultiMap<QString, QString> cookies, QString json)
 {
+    QtHttpResponse *response;
     prepare(GET, url, headers, files, data, params, auth, cookies, json);
+    QNetworkReply* reply = manager->get(*_request);
+    QEventLoop eventloop;
+    connect(reply, &QNetworkReply::finished, this, [&response, &eventloop, reply, this] {
+        response = new QtHttpResponse(reply);
+        eventloop.quit();
+    });
+    eventloop.exec(QEventLoop::DialogExec);
+    return response;
 }
 
-void QtHttpRequest::post(QString url, QByteArray data, QString json, QByteArray files, QString auth, QMap<QString, QString> params, QMap<QString, QString> cookies, QMap<QString, QString> headers)
+void QtHttpRequest::post(QString url, QByteArray data, QString json, QByteArray files, QString auth, QMap<QString, QString> params, QMultiMap<QString, QString> cookies, QMultiMap<QString, QString> headers)
 {}
 
-void QtHttpRequest::patch(QString url, QByteArray data, QString json, QByteArray files, QString auth, QMap<QString, QString> params, QMap<QString, QString> cookies, QMap<QString, QString> headers)
+void QtHttpRequest::patch(QString url, QByteArray data, QString json, QByteArray files, QString auth, QMap<QString, QString> params, QMultiMap<QString, QString> cookies, QMultiMap<QString, QString> headers)
 {}
 
-void QtHttpRequest::put(QString url, QByteArray data, QString json, QByteArray files, QString auth, QMap<QString, QString> params, QMap<QString, QString> cookies, QMap<QString, QString> headers)
+void QtHttpRequest::put(QString url, QByteArray data, QString json, QByteArray files, QString auth, QMap<QString, QString> params, QMultiMap<QString, QString> cookies, QMultiMap<QString, QString> headers)
 {}
 
-void QtHttpRequest::deleteResource(QString url, QByteArray data, QString json, QByteArray files, QString auth, QMap<QString, QString> params, QMap<QString, QString> cookies, QMap<QString, QString> headers)
+void QtHttpRequest::deleteResource(QString url, QByteArray data, QString json, QByteArray files, QString auth, QMap<QString, QString> params, QMultiMap<QString, QString> cookies, QMultiMap<QString, QString> headers)
 {}
 
-void QtHttpRequest::head(QString url, QMap<QString, QString> params, QMap<QString, QString> headers, QByteArray files, QByteArray data, QString auth, QMap<QString, QString> cookies, QString json)
+void QtHttpRequest::head(QString url, QMap<QString, QString> params, QMultiMap<QString, QString> headers, QByteArray files, QByteArray data, QString auth, QMultiMap<QString, QString> cookies, QString json)
 {}
 
-void QtHttpRequest::options(QString url, QMap<QString, QString> params, QMap<QString, QString> headers, QByteArray files, QByteArray data, QString auth, QMap<QString, QString> cookies, QString json)
+void QtHttpRequest::options(QString url, QMap<QString, QString> params, QMultiMap<QString, QString> headers, QByteArray files, QByteArray data, QString auth, QMultiMap<QString, QString> cookies, QString json)
 {}
 
-void QtHttpRequest::prepare(Method method, QString url, QMap<QString, QString> headers, QByteArray files, QByteArray data, QMap<QString, QString> params, QString auth, QMap<QString, QString> cookies, QString json)
+void QtHttpRequest::prepare(Method method, QString url, QMultiMap<QString, QString> headers, QByteArray files, QByteArray data, QMap<QString, QString> params, QString auth, QMultiMap<QString, QString> cookies, QString json)
 {
     prepareMethod(method);
     prepareURL(url, params);
@@ -67,18 +131,19 @@ void QtHttpRequest::prepareURL(const QString _url, const QMap<QString, QString>&
         query.addQueryItem(iter.key(), QUrl::toPercentEncoding(iter.value()));
     url.scheme();
     url.setQuery(query);
+    _request->setUrl(url);
     this->url = url;
 }
 
 
-void QtHttpRequest::prepareHeaders(const QMap<QString, QString>& headers)
+void QtHttpRequest::prepareHeaders(const QMultiMap<QString, QString>& headers)
 {
     for (auto iter = headers.cbegin(); iter != headers.cend(); iter++)
         _request->setRawHeader(iter.key().toUtf8(), iter.value().toUtf8());
     this->headers = headers;
 }
 
-void QtHttpRequest::prepareCookies(const QMap<QString, QString>& cookies)
+void QtHttpRequest::prepareCookies(const QMultiMap<QString, QString>& cookies)
 {
     QNetworkCookieJar *cookieJar = new QNetworkCookieJar;
     QList<QNetworkCookie> cookieList;

@@ -3,13 +3,97 @@
 
 #include <QObject>
 #include <QMap>
+#include <QMultiMap>
 #include <QList>
 #include <QNetworkAccessManager>
 #include <QUrlQuery>
 #include <QNetworkCookieJar>
 #include <QNetworkCookie>
+#include <QEventLoop>
+#include <QNetworkReply>
+#include <QJsonDocument>
 #include <iostream>
 
+
+class BaseHttpResponse: public QObject
+{
+    Q_OBJECT
+public:
+    BaseHttpResponse();
+
+    // Returns true if :attr:`status_code` is less than 400, False if not.
+    virtual bool ok() = 0;
+
+    // Throw HTTPError if one occured
+    virtual void raise_for_status() = 0;
+
+    // True if this Response is a well-formed HTTP redirect that could have
+    // been processed automatically
+    virtual bool is_redirect() = 0;
+
+    // True if this Response one of the permanent versions of redirect.
+    virtual bool is_permanent_redirect() = 0;
+
+    // Content of the response, in bytes.
+    virtual QByteArray content() = 0;
+
+    // Returns the json-encoded content of a response, if any.
+    virtual QJsonDocument json() = 0;
+
+    // Returns the parsed header links of the response, if any.
+    virtual QMultiMap<QString, QString> links() = 0;
+
+//    void close();
+
+protected:
+    QByteArray _content;
+    QByteArray _next;
+
+    bool _content_consumed;
+
+    // Integer Code of responded HTTP Status, e.g. 404 or 200.
+    QString status_code;
+
+    // Case-insensitive Dictionary of Response Headers.
+    // For example, ``headers['content-encoding']`` will return the
+    // value of a ``'Content-Encoding'`` response header.
+    QMultiMap<QString, QString> headers;
+
+    // File-like object representation of response (for advanced usage).
+    // Use of ``raw`` requires that ``stream=True`` be set on the request.
+    // This requirement does not apply for use internally to Requests.
+    QByteArray raw;
+
+    // Final URL location of Response.
+    QString url;
+
+    // Encoding to decode with when accessing r.text.
+    QString encoding;
+
+    // A list of :class:`Response <Response>` objects from
+    // the history of the Request. Any redirect responses will end
+    // up here. The list is sorted from the oldest to the most recent request.
+    QList<BaseHttpResponse*> history;
+
+    // Textual reason of responded HTTP Status, e.g. "Not Found" or "OK".
+    QString reason;
+
+    // A CookieJar of Cookies the server sent back.
+    QList<QNetworkCookie> cookieList;
+
+    // The amount of time elapsed between sending the request
+    // and the arrival of the response (as a timedelta).
+    // This property specifically measures the time taken between sending
+    // the first byte of the request and finishing parsing the headers. It
+    // is therefore unaffected by consuming the response content or the
+    // value of the ``stream`` keyword argument.
+    long elapsed;
+
+    // The :class:`PreparedRequest <PreparedRequest>` object to which this
+    // is a response.
+//    self.request = None
+
+};
 
 
 class BaseHttpRequest: public QObject
@@ -22,33 +106,33 @@ public:
     BaseHttpRequest();
 
 
-    virtual void get(QString url=nullptr, QMap<QString, QString> params={}, QMap<QString, QString> headers={},
+    virtual BaseHttpResponse* get(QString url=nullptr, QMap<QString, QString> params={}, QMultiMap<QString, QString> headers={},
                      QByteArray files=nullptr, QByteArray data=nullptr, QString auth=nullptr,
-                     QMap<QString, QString> cookies={}, QString json=nullptr) = 0;
+                     QMultiMap<QString, QString> cookies={}, QString json=nullptr) = 0;
 
     virtual void post(QString url=nullptr, QByteArray data=nullptr, QString json=nullptr,
                       QByteArray files=nullptr, QString auth=nullptr, QMap<QString, QString> params={},
-                      QMap<QString, QString> cookies={},  QMap<QString, QString> headers={}) = 0;
+                      QMultiMap<QString, QString> cookies={},  QMultiMap<QString, QString> headers={}) = 0;
 
     virtual void put(QString url=nullptr, QByteArray data=nullptr, QString json=nullptr,
                      QByteArray files=nullptr, QString auth=nullptr, QMap<QString, QString> params={},
-                     QMap<QString, QString> cookies={},  QMap<QString, QString> headers={}) = 0;
+                     QMultiMap<QString, QString> cookies={},  QMultiMap<QString, QString> headers={}) = 0;
 
     virtual void patch(QString url=nullptr, QByteArray data=nullptr, QString json=nullptr,
                        QByteArray files=nullptr, QString auth=nullptr, QMap<QString, QString> params={},
-                       QMap<QString, QString> cookies={},  QMap<QString, QString> headers={}) = 0;
+                       QMultiMap<QString, QString> cookies={},  QMultiMap<QString, QString> headers={}) = 0;
 
     virtual void deleteResource(QString url=nullptr, QByteArray data=nullptr, QString json=nullptr,
                                 QByteArray files=nullptr, QString auth=nullptr, QMap<QString, QString> params={},
-                                QMap<QString, QString> cookies={},  QMap<QString, QString> headers={}) = 0;
+                                QMultiMap<QString, QString> cookies={},  QMultiMap<QString, QString> headers={}) = 0;
 
-    virtual void head(QString url=nullptr, QMap<QString, QString> params={}, QMap<QString, QString> headers={},
+    virtual void head(QString url=nullptr, QMap<QString, QString> params={}, QMultiMap<QString, QString> headers={},
                       QByteArray files=nullptr, QByteArray data=nullptr, QString auth=nullptr,
-                      QMap<QString, QString> cookies={}, QString json=nullptr) = 0;
+                      QMultiMap<QString, QString> cookies={}, QString json=nullptr) = 0;
 
-    virtual void options(QString url=nullptr, QMap<QString, QString> params={}, QMap<QString, QString> headers={},
+    virtual void options(QString url=nullptr, QMap<QString, QString> params={}, QMultiMap<QString, QString> headers={},
                          QByteArray files=nullptr, QByteArray data=nullptr, QString auth=nullptr,
-                         QMap<QString, QString> cookies={}, QString json=nullptr) = 0;
+                         QMultiMap<QString, QString> cookies={}, QString json=nullptr) = 0;
 protected:
     // HTTP verb to send to the server.
     Method method;
@@ -57,7 +141,7 @@ protected:
     QUrl url;
 
     // dictionary of HTTP headers.
-    QMap<QString, QString> headers;
+    QMultiMap<QString, QString> headers;
 
     // The `CookieList` used to create the Cookie header will be stored here
     // after prepare_cookies is called
@@ -72,6 +156,33 @@ protected:
 
 
 
+class QtHttpResponse: public BaseHttpResponse
+{
+    Q_OBJECT
+public:
+    QtHttpResponse(QNetworkReply* reply);
+    ~QtHttpResponse();
+
+    friend std::ostream& operator<< (std::ostream& os, const QtHttpResponse& p);
+
+    bool ok();
+
+    void raise_for_status();
+
+    bool is_redirect();
+
+    bool is_permanent_redirect();
+
+    QByteArray content();
+
+    QJsonDocument json();
+
+    QMultiMap<QString, QString> links();
+private:
+    QNetworkReply* reply;
+};
+
+
 class QtHttpRequest: public BaseHttpRequest
 {
     Q_OBJECT
@@ -81,38 +192,38 @@ public:
     friend std::ostream& operator<< (std::ostream& os, const QtHttpRequest& p);
 
 
-    void get(QString url=nullptr, QMap<QString, QString> params={}, QMap<QString, QString> headers={},
+    BaseHttpResponse* get(QString url=nullptr, QMap<QString, QString> params={}, QMultiMap<QString, QString> headers={},
                      QByteArray files=nullptr, QByteArray data=nullptr, QString auth=nullptr,
-                     QMap<QString, QString> cookies={}, QString json=nullptr);
+                     QMultiMap<QString, QString> cookies={}, QString json=nullptr);
 
     void post(QString url=nullptr, QByteArray data=nullptr, QString json=nullptr,
                       QByteArray files=nullptr, QString auth=nullptr, QMap<QString, QString> params={},
-                      QMap<QString, QString> cookies={},  QMap<QString, QString> headers={});
+                      QMultiMap<QString, QString> cookies={},  QMultiMap<QString, QString> headers={});
 
     void put(QString url=nullptr, QByteArray data=nullptr, QString json=nullptr,
                      QByteArray files=nullptr, QString auth=nullptr, QMap<QString, QString> params={},
-                     QMap<QString, QString> cookies={},  QMap<QString, QString> headers={});
+                     QMultiMap<QString, QString> cookies={},  QMultiMap<QString, QString> headers={});
 
     void patch(QString url=nullptr, QByteArray data=nullptr, QString json=nullptr,
                        QByteArray files=nullptr, QString auth=nullptr, QMap<QString, QString> params={},
-                       QMap<QString, QString> cookies={},  QMap<QString, QString> headers={});
+                       QMultiMap<QString, QString> cookies={},  QMultiMap<QString, QString> headers={});
 
     void deleteResource(QString url=nullptr, QByteArray data=nullptr, QString json=nullptr,
                                 QByteArray files=nullptr, QString auth=nullptr, QMap<QString, QString> params={},
-                                QMap<QString, QString> cookies={},  QMap<QString, QString> headers={});
+                                QMultiMap<QString, QString> cookies={},  QMultiMap<QString, QString> headers={});
 
-    void head(QString url=nullptr, QMap<QString, QString> params={}, QMap<QString, QString> headers={},
+    void head(QString url=nullptr, QMap<QString, QString> params={}, QMultiMap<QString, QString> headers={},
                       QByteArray files=nullptr, QByteArray data=nullptr, QString auth=nullptr,
-                      QMap<QString, QString> cookies={}, QString json=nullptr);
+                      QMultiMap<QString, QString> cookies={}, QString json=nullptr);
 
-    void options(QString url=nullptr, QMap<QString, QString> params={}, QMap<QString, QString> headers={},
+    void options(QString url=nullptr, QMap<QString, QString> params={}, QMultiMap<QString, QString> headers={},
                          QByteArray files=nullptr, QByteArray data=nullptr, QString auth=nullptr,
-                         QMap<QString, QString> cookies={}, QString json=nullptr);
+                         QMultiMap<QString, QString> cookies={}, QString json=nullptr);
 private:
-    void prepare(Method method, QString url=nullptr, QMap<QString, QString> headers={},
+    void prepare(Method method, QString url=nullptr, QMultiMap<QString, QString> headers={},
                  QByteArray files=nullptr, QByteArray data=nullptr, QMap<QString, QString> params={},
-                 QString auth=nullptr, QMap<QString, QString> cookies={}, QString json=nullptr);
-    QtHttpRequest* copy();
+                 QString auth=nullptr, QMultiMap<QString, QString> cookies={}, QString json=nullptr);
+//    QtHttpRequest* copy();
 
     // Prepares the given HTTP method.
     void prepareMethod(Method);
@@ -121,7 +232,7 @@ private:
     void prepareURL(const QString, const QMap<QString, QString>&);
 
     // Prepares the given HTTP headers.
-    void prepareHeaders(const QMap<QString, QString>&);
+    void prepareHeaders(const QMultiMap<QString, QString>&);
 
     // Prepares the given HTTP body data.
     void prepareBody(const QByteArray&, const QByteArray&, const QString&);
@@ -133,7 +244,7 @@ private:
     void prepareAuth(QString, QString url="");
 
     // Prepares the given HTTP cookie data.
-    void prepareCookies(const QMap<QString, QString>&);
+    void prepareCookies(const QMultiMap<QString, QString>&);
 private:
     QNetworkAccessManager* manager;
     QNetworkRequest* _request;

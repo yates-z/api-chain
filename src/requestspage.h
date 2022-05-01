@@ -17,6 +17,7 @@
 #include "widgets.h"
 #include "input.h"
 #include "labels.h"
+#include "network.h"
 #include <QDebug>
 
 class HistoryWidget: public QWidget
@@ -87,6 +88,8 @@ private:
     QComboBox* comboBox;
     QStackedWidget* bottomContent;
     QTextEdit* editor;
+private:
+    QMap<QString, QString> headers;
 };
 
 class RequestBody: public QWidget
@@ -101,6 +104,8 @@ private:
     QStackedWidget* bottomContent;
     // 输入框
     QTextEdit* editor;
+private:
+    QByteArray body;
 };
 
 // 请求部分，包括header、body等
@@ -160,6 +165,7 @@ class ResponsePart: public BorderRadiusWidget
     Q_OBJECT
 public:
     ResponsePart(QWidget* parent=nullptr);
+    void initUi();
 private:
     QLabel* titleLabel;
     QLabel* infoLabel;

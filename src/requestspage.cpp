@@ -268,7 +268,9 @@ void RequestPart::initSignals()
 
 void RequestPart::send()
 {
-    qDebug() <<1234;
+    BaseHttpRequest* request = request_producer(BaseHttpRequest::QNetWork);
+    BaseHttpResponse* response = request->get(urlInput->text());
+    qDebug() << response->content();
 }
 
 ResponseHeader::ResponseHeader(QWidget* parent)
@@ -337,10 +339,14 @@ ResponsePart::ResponsePart(QWidget* parent)
     , responseHeader(new ResponseHeader(this))
     , responseBody(new ResponseBody(this))
 {
+    initUi();
+}
+
+void ResponsePart::initUi()
+{
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(titleLabel);
     layout->addWidget(infoLabel);
-
 
     splitter->setHandleWidth(1);
     splitter->addWidget(responseHeader);
