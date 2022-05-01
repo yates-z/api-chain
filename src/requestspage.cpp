@@ -224,8 +224,9 @@ RequestPart::RequestPart(QWidget* parent)
     : BorderRadiusWidget(parent)
     , layout(new QVBoxLayout(this))
     , methodSelector(new QComboBox(this))
-    , urlInput(new FilterInput(this))
-    , sendButton(new QPushButton(this))
+    , urlInput(new URLInput("https://", this))
+    , lengthLable(new QLabel(QString("length: %1 byte(s)").arg(urlInput->text().toLocal8Bit().length())))
+    , sendButton(new SendButton(this))
     , requestHeader(new RequestHeader(this))
     , requestBody(new RequestBody(this))
 {
@@ -236,8 +237,20 @@ RequestPart::RequestPart(QWidget* parent)
 void RequestPart::initUi()
 {
     QGridLayout *topLayout = new QGridLayout;
-    topLayout->addWidget(new QLabel("METHOD"), 0, 0);
-    topLayout->addWidget(new QLabel("SCHEME :// HOST [ \":\" PORT ] [ PATH [ \"?\" QUERY ]]"), 0, 1);
+
+    QLabel *label1 = new QLabel("METHOD");
+    QFont font = label1->font();
+    font.setPointSize(11);
+    label1->setFont(font);
+    QPalette p = label1->palette();
+    p.setColor(QPalette::WindowText, ColorStyle::currentTooltipColor);
+    label1->setPalette(p);
+    topLayout->addWidget(label1, 0, 0);
+
+    QLabel *label2 = new QLabel("SCHEME :// HOST [ \":\" PORT ] [ PATH [ \"?\" QUERY ]]");
+    label2->setFont(font);
+    label2->setPalette(p);
+    topLayout->addWidget(label2, 0, 1);
 
     methodSelector->addItems({"GET", "POST", "PATCH", "PUT", "DELETE", "HEAD", "OPTIONS"});
     topLayout->addWidget(methodSelector, 1, 0);
@@ -245,11 +258,16 @@ void RequestPart::initUi()
     urlInput->setFixedHeight(28);
     topLayout->addWidget(urlInput, 1, 1);
 
-    sendButton->setText(tr("Send"));
+    sendButton->setFixedHeight(28);
     topLayout->addWidget(sendButton, 1, 2);
-    layout->addLayout(topLayout);
 
-    topLayout->addWidget(new QLabel("length:  byte(s)"), 2, 1, Qt::AlignRight);
+    lengthLable->setFont(font);
+    lengthLable->setPalette(p);
+    topLayout->addWidget(lengthLable, 2, 1, Qt::AlignRight);
+
+
+    topLayout->setSpacing(0);
+    layout->addLayout(topLayout);
 
     QSplitter* splitter = new QSplitter(this);
     splitter->setHandleWidth(1);
@@ -257,13 +275,16 @@ void RequestPart::initUi()
     splitter->addWidget(requestBody);
 
     layout->addWidget(splitter);
-    layout->setContentsMargins(35, 35, 35, 35);
+    layout->setContentsMargins(20, 35, 20, 20);
 }
 
 
 void RequestPart::initSignals()
 {
-    connect(sendButton, &QPushButton::clicked, this, &RequestPart::send);
+    connect(sendButton, &SendButton::sendBtnClicked, this, &RequestPart::send);
+    connect(urlInput, &QLineEdit::textChanged, this, [&]{
+        lengthLable->setText(QString("length: %1 byte(s)").arg(urlInput->text().toLocal8Bit().length()));
+    });
 }
 
 void RequestPart::send()
@@ -345,14 +366,27 @@ ResponsePart::ResponsePart(QWidget* parent)
 void ResponsePart::initUi()
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
+
+    QFont font = titleLabel->font();
+    font.setWeight(QFont::DemiBold);
+    font.setPointSize(18);
+    titleLabel->setFont(font);
+
+    QPalette palette = titleLabel->palette();
+    palette.setColor(QPalette::WindowText, ColorStyle::currentFontColor);
+    titleLabel->setPalette(palette);
     layout->addWidget(titleLabel);
+
+    infoLabel->setPalette(palette);
     layout->addWidget(infoLabel);
+    layout->addStretch(1);
 
     splitter->setHandleWidth(1);
     splitter->addWidget(responseHeader);
     splitter->addWidget(responseBody);
     layout->addWidget(splitter);
     splitter->hide();
+    layout->setContentsMargins(20, 20, 20, 20);
 }
 
 

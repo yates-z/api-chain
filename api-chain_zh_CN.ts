@@ -51,22 +51,14 @@
     </message>
 </context>
 <context>
-    <name>RequestPart</name>
-    <message>
-        <location filename="src/requestspage.cpp" line="248"/>
-        <source>Send</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ResponsePart</name>
     <message>
-        <location filename="src/requestspage.cpp" line="336"/>
+        <location filename="src/requestspage.cpp" line="357"/>
         <source>Response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/requestspage.cpp" line="337"/>
+        <location filename="src/requestspage.cpp" line="358"/>
         <source>Not available, a request has not been sent yet.</source>
         <translation type="unfinished"></translation>
     </message>

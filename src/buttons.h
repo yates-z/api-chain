@@ -9,6 +9,8 @@
 #include <QSvgRenderer>
 #include <QFile>
 #include <QDomDocument>
+#include <QHBoxLayout>
+#include "labels.h"
 #include "constants.h"
 
 class BasicButton:public QPushButton
@@ -98,6 +100,38 @@ public:
     UnFilledPrimaryButton(QWidget *parent=nullptr);
     UnFilledPrimaryButton(QString s, QWidget *parent=nullptr);
     void initUi();
+};
+
+class RealSendButton : public BasicButton
+{
+    Q_OBJECT
+public:
+    RealSendButton(QWidget* parent=nullptr);
+    RealSendButton(QString s, QWidget *parent=nullptr);
+    void initUi();
+    void setRightPart(bool);
+
+    void paintEvent(QPaintEvent*);
+private:
+    QColor color;
+    QColor hoverColor;
+    int borderRadius;
+    bool rightPart;
+};
+
+class SendButton: public QWidget
+{
+    Q_OBJECT
+signals:
+    void sendBtnClicked();
+public:
+    SendButton(QWidget* parent = nullptr);
+    void initUi();
+    void initSignals();
+private:
+    QHBoxLayout* layout;
+    RealSendButton* sendBtn;
+    RealSendButton* selector;
 };
 
 #endif // BUTTONS_H

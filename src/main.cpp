@@ -13,6 +13,11 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(logger);
     #endif
 
+    // set global color
+//    QPalette p = QApplication::palette();
+//    p.setColor(QPalette::WindowText, Qt::red);
+//    QApplication::setPalette(p);
+
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {

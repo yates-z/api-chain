@@ -119,7 +119,7 @@ void LeftBarTabButton::paintEvent(QPaintEvent* e)
     painter.setPen(pen);
     QFont font = this->font();
     font.setWeight(QFont::Medium);
-    font.setPointSize(6);
+    font.setPointSize(8);
     QRectF rect(0, height() - 23, width(), 25);
     painter.setFont(font);
     painter.drawText(rect, Qt::AlignHCenter | Qt::AlignVCenter, this->text());
@@ -280,3 +280,122 @@ void UnFilledPrimaryButton::initUi()
                         ".UnFilledPrimaryButton:hover{ color: %2; border: 1px solid %1; background-color: %1;}").arg(
                     ColorStyle::currentFocusColor.name(), ColorStyle::white.name()));
 }
+
+
+
+RealSendButton::RealSendButton(QWidget* parent)
+    : BasicButton(parent)
+    , color(QColor(54,121,229))
+    , hoverColor(QColor(42,99,202))
+    , borderRadius(8)
+{
+    initUi();
+}
+
+RealSendButton::RealSendButton(QString s, QWidget* parent)
+    : BasicButton(parent)
+    , color(QColor(54,121,229))
+    , hoverColor(QColor(42,99,202))
+    , borderRadius(8)
+    , rightPart(false)
+{
+    initUi();
+    setText(s);
+}
+
+void RealSendButton::initUi()
+{
+    QString qss;
+    if (rightPart)
+        qss = QString("RealSendButton{"
+                        "color: #FFFFFF;"
+                        "border: 1px solid %1;"
+                        "margin: 0px 5px 0px 0px;"
+                        "border-top-right-radius: %3px;"
+                        "border-bottom-right-radius: %3px; "
+                        "background-color: %1"
+                    "}"
+                    ".RealSendButton:hover{ "
+                        "border: 1px solid %2;"
+                        "background-color: %2;"
+                    "}").arg(color.name(), hoverColor.name()).arg(borderRadius);
+    else
+        qss = QString("RealSendButton{"
+                        "color: #FFFFFF;"
+                        "border: 1px solid %1;"
+                        "margin: 0px 0px 0px 5px;"
+                        "border-top-left-radius: %3px;"
+                        "border-bottom-left-radius: %3px; "
+                        "background-color: %1"
+                    "}"
+                    ".RealSendButton:hover{ "
+                        "border: 1px solid %2;"
+                        "background-color: %2;"
+                    "}").arg(color.name(), hoverColor.name()).arg(borderRadius);
+
+    this->setStyleSheet(qss);
+}
+
+void RealSendButton::setRightPart(bool b)
+{
+    rightPart = b;
+    initUi();
+}
+
+void RealSendButton::paintEvent(QPaintEvent *event)
+{
+    QPushButton::paintEvent(event);
+    QPainter painter(this);
+    if (rightPart)
+    {
+        painter.setBrush(QColor("#FFFFFF"));
+        QPoint point1(width()/2 - 6, height()/2 - 2);
+        QPoint point2(width()/2 + 2, height()/2 - 2);
+        QPoint point3(width()/2 - 2, height()/2 + 2);
+
+        QPolygon polygon;
+        polygon.append(point1);
+        polygon.append(point2);
+        polygon.append(point3);
+        painter.drawPolygon(polygon);
+    }
+}
+
+
+
+SendButton::SendButton(QWidget* parent)
+    : QWidget(parent)
+    , layout(new QHBoxLayout(this))
+    , sendBtn(new RealSendButton("Send", this))
+    , selector(new RealSendButton("", this))
+{
+    initUi();
+    initSignals();
+}
+
+void SendButton::initUi()
+{
+    setFixedWidth(120);
+
+    QFont font = sendBtn->font();
+    font.setBold(QFont::DemiBold);
+    sendBtn->setFont(font);
+    sendBtn->setFixedHeight(height() - 2);
+    layout->addWidget(sendBtn, 9);
+
+    SplitLine *splitLine = new SplitLine(1, height(), QColor("#cacaca"), this);
+    splitLine->setOrientation(Qt::Vertical);
+    layout->addWidget(splitLine);
+
+    selector->setFixedSize(30, height() - 2);
+    selector->setRightPart(true);
+    layout->addWidget(selector, 1);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+}
+
+void SendButton::initSignals()
+{
+    connect(sendBtn, &QPushButton::clicked, this, [&]{emit this->sendBtnClicked();});
+}
+

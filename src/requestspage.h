@@ -122,9 +122,11 @@ private:
     // http method selector
     QComboBox* methodSelector;
     // url input
-    FilterInput* urlInput;
+    URLInput* urlInput;
+    // A label to show url length
+    QLabel* lengthLable;
     // send button
-    QPushButton* sendButton;
+    SendButton* sendButton;
     // header
     RequestHeader* requestHeader;
     // body

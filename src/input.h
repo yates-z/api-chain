@@ -21,10 +21,27 @@ private slots:
 //    void leaveEvent(QEvent *);
     void focusInEvent(QFocusEvent *);
     void focusOutEvent(QFocusEvent *);
-private:
+protected:
     QString path;
     bool isFocus;
     int margin;
+    int innerMargin;
+    QString lineColor;
+    QString focusColor;
+};
+
+class URLInput: public FilterInput
+{
+    Q_OBJECT
+public:
+    URLInput(QWidget *parent=nullptr);
+    URLInput(QString text="", QWidget *parent=nullptr);
+    void initSignals();
+    void showIsSafe();
+public Q_SLOTS:
+    void setText(const QString &);
+private:
+    bool isSafe;
 };
 
 class PlainFilterInput:public FilterInput
