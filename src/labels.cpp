@@ -48,7 +48,7 @@ TitleLabel::TitleLabel(QWidget *parent, const QString& text, const QColor color)
     : QLabel(parent)
 {
     // 设置字体
-    QString fontPath = QString(":/font/Bookman-Old-Style.ttf");
+    QString fontPath = QString(":/resource/font/Bookman-Old-Style.ttf");
     int loadedFontID = QFontDatabase::addApplicationFont(fontPath);
     QString bookman = QFontDatabase::applicationFontFamilies (loadedFontID).at(0);
 
