@@ -4,5 +4,6 @@
         <file>resource/svg/folder.svg</file>
         <file>resource/svg/history.svg</file>
         <file>resource/svg/search.svg</file>
+        <file>font/Bookman-Old-Style.ttf</file>
     </qresource>
 </RCC>

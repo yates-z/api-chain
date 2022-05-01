@@ -48,10 +48,15 @@ TitleLabel::TitleLabel(QWidget *parent, const QString& text, const QColor color)
     : QLabel(parent)
 {
     // 设置字体
+    QString fontPath = QString(":/font/Bookman-Old-Style.ttf");
+    int loadedFontID = QFontDatabase::addApplicationFont(fontPath);
+    QString bookman = QFontDatabase::applicationFontFamilies (loadedFontID).at(0);
+
     QFont font;
+    font.setFamily(bookman);
     font.setPointSize(14);
     font.setWeight(QFont::ExtraBold);
-    font.setFamily("Bookman Old Style");
+//    font.setFamily("Palatino");
     setFont(font);
 
     // 设置文字颜色

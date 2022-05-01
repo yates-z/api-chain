@@ -110,6 +110,8 @@ class RequestPart: public BorderRadiusWidget
 public:
     RequestPart(QWidget* parent=nullptr);
     void initUi();
+    void initSignals();
+    void send();
 private:
     QVBoxLayout* layout;
     // http method selector

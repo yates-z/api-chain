@@ -46,9 +46,12 @@ MainWindow::MainWindow(QWidget* parent)
 {
     Q_UNUSED(sender);
     if (0 == self.window) return;
-    if (self.window->isMaximized()) self.window->showNormal();
-    else self.window->showMaximized();
+    if (self.window->isMaximized() || self.window->isFullScreen())
+        self.window->showNormal();
+    else
+        self.window->showMaximized();
 }
+
 @end
 
 void MainWindow::initUi()
@@ -57,8 +60,6 @@ void MainWindow::initUi()
     resize(1260, 720);
     // 无边框
     hideTitleBar();
-    // 设置系统按钮位置
-    setTitleButtonPos();
 
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(titleBar);
@@ -119,41 +120,6 @@ void MainWindow::reloadZoomButton()
     [zoomButton setAction:@selector(zoomButtonAction:)];
 }
 
-
-void MainWindow::setTitleButtonPos()
-{
-    NSView* view = (NSView*)winId();
-    NSWindow *window = view.window;
-
-    NSTitlebarAccessoryViewController *vc = [[NSTitlebarAccessoryViewController alloc] init];
-    vc.view = [[NSView alloc] initWithFrame:((NSView *)window.contentView).frame];
-    [window addTitlebarAccessoryViewController:vc];
-
-    NSButton *closeBtn = [window standardWindowButton:NSWindowCloseButton];
-    NSButton *miniaturizeBtn = [window standardWindowButton:NSWindowMiniaturizeButton];
-    NSButton *zoomBtn = [window standardWindowButton:NSWindowZoomButton];
-
-    closeBtn.translatesAutoresizingMaskIntoConstraints = NO;
-    miniaturizeBtn.translatesAutoresizingMaskIntoConstraints = NO;
-    zoomBtn.translatesAutoresizingMaskIntoConstraints = NO;
-
-    NSLayoutConstraint *leftContraint1 = [NSLayoutConstraint constraintWithItem:closeBtn attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:closeBtn.superview attribute:NSLayoutAttributeLeft multiplier:1.0 constant:14.0];
-    NSLayoutConstraint *topContraint1 = [NSLayoutConstraint constraintWithItem:closeBtn attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:closeBtn.superview attribute:NSLayoutAttributeTop multiplier:1.0 constant:18.0];
-    leftContraint1.active = YES;
-    topContraint1.active = YES;
-
-    NSLayoutConstraint *leftContraint2 = [NSLayoutConstraint constraintWithItem:miniaturizeBtn attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:miniaturizeBtn.superview attribute:NSLayoutAttributeLeft multiplier:1.0 constant:33.0];
-    NSLayoutConstraint *topContraint2 = [NSLayoutConstraint constraintWithItem:miniaturizeBtn attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:miniaturizeBtn.superview attribute:NSLayoutAttributeTop multiplier:1.0 constant:18.0];
-    leftContraint2.active = YES;
-    topContraint2.active = YES;
-
-    NSLayoutConstraint *leftContraint3 = [NSLayoutConstraint constraintWithItem:zoomBtn attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:zoomBtn.superview attribute:NSLayoutAttributeLeft multiplier:1.0 constant:53.0];
-    NSLayoutConstraint *topContraint3 = [NSLayoutConstraint constraintWithItem:zoomBtn attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:zoomBtn.superview attribute:NSLayoutAttributeTop multiplier:1.0 constant:18.0];
-    leftContraint3.active = YES;
-    topContraint3.active = YES;
-
-}
-
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     if ((event->button() != Qt::LeftButton) || isMaximized() )
@@ -162,7 +128,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     }
 
     int height = size().height();
-    height = 28;
+    height = 48;
     QRect rc;
     rc.setRect(0,0,size().width(), height);
     if(rc.contains(this->mapFromGlobal(QCursor::pos()))==true)//如果按下的位置
@@ -192,6 +158,56 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     this->move(m_WindowPos + (event->globalPos() - m_MousePos));
     return QMainWindow::mouseMoveEvent(event);
 }
+
+void MainWindow::showEvent(QShowEvent *event)
+{
+    NSView* view = (NSView*)winId();
+    NSWindow *window = view.window;
+
+//    NSButton *closeBtn = [NSWindow standardWindowButton:NSWindowCloseButton forStyleMask:3];
+//    NSButton *miniaturizeBtn = [NSWindow standardWindowButton:NSWindowMiniaturizeButton forStyleMask:3];
+//    NSButton *zoomBtn = [NSWindow standardWindowButton:NSWindowZoomButton forStyleMask:3];
+
+    NSButton *closeBtn = [window standardWindowButton:NSWindowCloseButton];
+    NSButton *miniaturizeBtn = [window standardWindowButton:NSWindowMiniaturizeButton];
+    NSButton *zoomBtn = [window standardWindowButton:NSWindowZoomButton];
+//    closeBtn.frame = NSMakeRect(13, 16, closeBtn.bounds.size.width, closeBtn.bounds.size.height);
+//    miniaturizeBtn.frame = NSMakeRect(33, 16, miniaturizeBtn.bounds.size.width, miniaturizeBtn.bounds.size.height);
+//    zoomBtn.frame = NSMakeRect(53, 16, zoomBtn.bounds.size.width, zoomBtn.bounds.size.height);
+
+//    [window.contentView.superview addSubview:closeBtn];
+//    [view addSubview:miniaturizeBtn];
+//    [view addSubview:zoomBtn];
+
+//    NSArray *subviews = window.contentView.superview.subviews;
+//     for (NSView *view in subviews) {
+//         if ([view isKindOfClass:NSClassFromString(@"NSTitlebarContainerView")]) {
+//                 [view removeFromSuperview];
+//         }
+//     }
+    closeBtn.translatesAutoresizingMaskIntoConstraints = NO;
+    miniaturizeBtn.translatesAutoresizingMaskIntoConstraints = NO;
+    zoomBtn.translatesAutoresizingMaskIntoConstraints = NO;
+
+    NSLayoutConstraint *leftContraint1 = [NSLayoutConstraint constraintWithItem:closeBtn attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:closeBtn.superview attribute:NSLayoutAttributeLeft multiplier:1.0 constant:14.0];
+    NSLayoutConstraint *topContraint1 = [NSLayoutConstraint constraintWithItem:closeBtn attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:closeBtn.superview attribute:NSLayoutAttributeTop multiplier:1.0 constant:15.0];
+    leftContraint1.active = YES;
+    topContraint1.active = YES;
+
+    NSLayoutConstraint *leftContraint2 = [NSLayoutConstraint constraintWithItem:miniaturizeBtn attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:miniaturizeBtn.superview attribute:NSLayoutAttributeLeft multiplier:1.0 constant:33.0];
+    NSLayoutConstraint *topContraint2 = [NSLayoutConstraint constraintWithItem:miniaturizeBtn attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:miniaturizeBtn.superview attribute:NSLayoutAttributeTop multiplier:1.0 constant:15.0];
+    leftContraint2.active = YES;
+    topContraint2.active = YES;
+
+    NSLayoutConstraint *leftContraint3 = [NSLayoutConstraint constraintWithItem:zoomBtn attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:zoomBtn.superview attribute:NSLayoutAttributeLeft multiplier:1.0 constant:53.0];
+    NSLayoutConstraint *topContraint3 = [NSLayoutConstraint constraintWithItem:zoomBtn attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:zoomBtn.superview attribute:NSLayoutAttributeTop multiplier:1.0 constant:15.0];
+    leftContraint3.active = YES;
+    topContraint3.active = YES;
+
+    QMainWindow::showEvent(event);
+}
+
+
 MainWindow::~MainWindow()
 {}
 #endif

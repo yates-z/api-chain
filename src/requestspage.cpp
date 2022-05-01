@@ -230,6 +230,7 @@ RequestPart::RequestPart(QWidget* parent)
     , requestBody(new RequestBody(this))
 {
     initUi();
+    initSignals();
 }
 
 void RequestPart::initUi()
@@ -259,6 +260,16 @@ void RequestPart::initUi()
     layout->setContentsMargins(35, 35, 35, 35);
 }
 
+
+void RequestPart::initSignals()
+{
+    connect(sendButton, &QPushButton::clicked, this, &RequestPart::send);
+}
+
+void RequestPart::send()
+{
+    qDebug() <<1234;
+}
 
 ResponseHeader::ResponseHeader(QWidget* parent)
     :QWidget(parent)
@@ -335,7 +346,7 @@ ResponsePart::ResponsePart(QWidget* parent)
     splitter->addWidget(responseHeader);
     splitter->addWidget(responseBody);
     layout->addWidget(splitter);
-
+    splitter->hide();
 }
 
 
@@ -400,7 +411,9 @@ void RequestsPage::initUi()
     leftSideBtn->setFixedWidth(12);
     layout->addWidget(leftSideBtn);
 
-    _requestsPage->setHandleWidth(1);
+    _requestsPage->setHandleWidth(0);
+    _requestsPage->setObjectName("_requestsPage");
+    _requestsPage->setStyleSheet("QSplitter#_requestsPage::handle { background-color: #ececec; }");
     _requestsPage->insertWidget(0, leftSideBar);
     _requestsPage->insertWidget(1, requestContentPage);
     // 会自己剪裁

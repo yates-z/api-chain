@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include <QPalette>
+#include <QFontDatabase>
 #include "constants.h"
 
 class SplitLine: public QLabel

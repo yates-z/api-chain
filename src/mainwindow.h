@@ -98,6 +98,7 @@ public:
     TitleBar* titleBar;
     BaseContent* content;
 protected:
+    void showEvent(QShowEvent *);
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

@@ -29,7 +29,7 @@ void TitleBar::initUi()
 
     #ifdef Q_OS_MAC
     // OSX留位置给系统按钮
-    leftlayout->addSpacerItem(new QSpacerItem(60, 48));
+    leftLayout->addSpacerItem(new QSpacerItem(60, 48));
     #endif
     // logo
     logo->setFixedSize(fixedHeight*0.6, fixedHeight*0.6);

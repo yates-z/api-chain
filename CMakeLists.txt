@@ -18,14 +18,15 @@ find_package(Qt6 COMPONENTS Network REQUIRED)
 
 set(TS_FILES api-chain_zh_CN.ts)
 
-if(APPLE)
-    set(CROSSFILES, src/mainwindow.mm)
-elseif(WIN32)
-    set(CROSSFILES, src/mainwindow.mm)
+if (APPLE)
+    set(CROSSFILES src/mainwindow.mm)
+elseif (WIN32)
+    set(CROSSFILES src/mainwindow.cpp)
 endif()
 
 set(PROJECT_SOURCES
         src/main.cpp
+        src/mainwindow.h
         ${CROSSFILES}
         src/mainwindow.cpp
         src/buttons.h

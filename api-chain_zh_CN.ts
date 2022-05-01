@@ -53,7 +53,7 @@
 <context>
     <name>RequestPart</name>
     <message>
-        <location filename="src/requestspage.cpp" line="247"/>
+        <location filename="src/requestspage.cpp" line="248"/>
         <source>Send</source>
         <translation type="unfinished"></translation>
     </message>
@@ -61,12 +61,12 @@
 <context>
     <name>ResponsePart</name>
     <message>
-        <location filename="src/requestspage.cpp" line="323"/>
+        <location filename="src/requestspage.cpp" line="334"/>
         <source>Response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/requestspage.cpp" line="324"/>
+        <location filename="src/requestspage.cpp" line="335"/>
         <source>Not available, a request has not been sent yet.</source>
         <translation type="unfinished"></translation>
     </message>
