@@ -3,13 +3,26 @@
 BaseHttpResponse::BaseHttpResponse()
 {}
 
+QString BaseHttpResponse::getHeaderString()
+{
+    QString headers;
+    foreach(QString s, this->headers.uniqueKeys())
+    {
+        foreach(QString v, this->headers.values(s))
+            headers += s + ": " + v + "\n";
+    }
+    return headers;
+}
+
 BaseHttpRequest::BaseHttpRequest()
 {}
 
 
 QtHttpResponse::QtHttpResponse(QNetworkReply* reply)
+    : BaseHttpResponse()
 {
-    this->reply = reply;
+    _content_consumed = false;
+    setReply(reply);
 }
 
 QtHttpResponse::~QtHttpResponse()
@@ -17,38 +30,84 @@ QtHttpResponse::~QtHttpResponse()
     delete reply;
 }
 
-std::ostream& operator<< (std::ostream& os, const QtHttpResponse& p)
+std::ostream& operator << (std::ostream& os, const QtHttpResponse& p)
 {
     os << QString("<Qt Network Response [%1]>").arg(p.status_code).toStdString();
     return os;
 }
 
-bool QtHttpResponse::ok()
+void QtHttpResponse::setReply(QNetworkReply *reply)
 {
-    return true;
+    this->reply = reply;
+    if (this->reply)
+    {
+        this->status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toString();
+        this->reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+        this->url = reply->url().toString();
+        QList<QByteArray> headerList = reply->rawHeaderList();
+        foreach(QByteArray head, headerList) {
+            headers.insert(QString::fromLocal8Bit(head), QString::fromLocal8Bit(reply->rawHeader(head)));
+        }
+    }
 }
 
-void QtHttpResponse::raise_for_status()
-{}
+
+bool QtHttpResponse::ok()
+{
+    if (status_errors().isEmpty())
+        return true;
+    return false;
+}
+
+QString QtHttpResponse::status_errors()
+{
+    QString http_error_msg = "";
+    if (400 <= status_code.toInt() && status_code.toInt() < 500)
+        http_error_msg = QString("%1 Client Error: %2 for url: %3").arg(status_code, reason, url);
+    else if (500 <= status_code.toInt() && status_code.toInt() < 600)
+        http_error_msg = QString("%1 Server Error: %s for url: %s").arg(status_code, reason, url);
+    return http_error_msg;
+}
 
 bool QtHttpResponse::is_redirect()
 {
-    return true;
+
+    return headers.uniqueKeys().contains("location") && QList<QString>{"301", "302", "303", "307", "308"}.contains(status_code);
 }
 
 bool QtHttpResponse::is_permanent_redirect()
 {
-    return true;
+    return headers.uniqueKeys().contains("location") && QList<QString>{"301", "308"}.contains(status_code);
 }
 
 QByteArray QtHttpResponse::content()
 {
-    return "";
+    if (_content.isEmpty())
+    {
+        if (_content_consumed)
+            return _content;
+        if (status_code.isEmpty())
+            _content = "";
+        else
+            _content = reply->readAll();
+    }
+    _content_consumed = true;
+    return _content;
 }
 
-QJsonDocument QtHttpResponse::json()
+QString QtHttpResponse::text()
 {
-    return {};
+    QString content = "";
+    try {
+        content = QString::fromLocal8Bit(this->content());
+    }  catch (...) {}
+    return content;
+}
+
+QJsonObject QtHttpResponse::json()
+{
+    QJsonDocument doc = QJsonDocument::fromJson(this->content());
+    return doc.object();
 }
 
 QMultiMap<QString, QString> QtHttpResponse::links()
@@ -75,14 +134,17 @@ std::ostream& operator<< (std::ostream& os, const QtHttpRequest& p)
     return os;
 }
 
-BaseHttpResponse* QtHttpRequest::get(QString url, QMap<QString, QString> params, QMultiMap<QString, QString> headers, QByteArray files, QByteArray data, QString auth, QMultiMap<QString, QString> cookies, QString json)
+BaseHttpResponse* QtHttpRequest::get(
+        QString url, QMap<QString, QString> params, QMultiMap<QString, QString> headers,
+        QByteArray files, QByteArray data, QString auth,
+        QMultiMap<QString, QString> cookies, QString json)
 {
-    QtHttpResponse *response;
+    QtHttpResponse *response = new QtHttpResponse();
     prepare(GET, url, headers, files, data, params, auth, cookies, json);
     QNetworkReply* reply = manager->get(*_request);
     QEventLoop eventloop;
     connect(reply, &QNetworkReply::finished, this, [&response, &eventloop, reply, this] {
-        response = new QtHttpResponse(reply);
+        response->setReply(reply);
         eventloop.quit();
     });
     eventloop.exec(QEventLoop::DialogExec);

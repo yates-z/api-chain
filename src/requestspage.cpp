@@ -291,7 +291,7 @@ void RequestPart::send()
 {
     BaseHttpRequest* request = request_producer(BaseHttpRequest::QNetWork);
     BaseHttpResponse* response = request->get(urlInput->text());
-    qDebug() << response->content();
+    emit receivedResponse(response);
 }
 
 ResponseHeader::ResponseHeader(QWidget* parent)
@@ -305,7 +305,7 @@ ResponseHeader::ResponseHeader(QWidget* parent)
     QHBoxLayout* topLayout = new QHBoxLayout;
     topLayout->addWidget(new QLabel("HEADERS"), Qt::AlignLeft);
     topLayout->addStretch(1);
-    comboBox->addItems({"Form", "Raw"});
+    comboBox->addItems({"pretty", "raw"});
     topLayout->addWidget(comboBox, Qt::AlignRight);
 
     layout->addLayout(topLayout);
@@ -322,6 +322,11 @@ ResponseHeader::ResponseHeader(QWidget* parent)
     layout->setSpacing(0);
 }
 
+void ResponseHeader::setContent(const QString &content)
+{
+    editor->setPlainText(content);
+}
+
 
 ResponseBody::ResponseBody(QWidget* parent)
     :QWidget(parent)
@@ -334,7 +339,7 @@ ResponseBody::ResponseBody(QWidget* parent)
     QHBoxLayout* topLayout = new QHBoxLayout;
     topLayout->addWidget(new QLabel("BODY"), Qt::AlignLeft);
     topLayout->addStretch(1);
-    comboBox->addItems({"Text", "Form", "File"});
+    comboBox->addItems({"pretty", "raw", "preview"});
     topLayout->addWidget(comboBox, Qt::AlignRight);
 
     layout->addLayout(topLayout);
@@ -349,6 +354,11 @@ ResponseBody::ResponseBody(QWidget* parent)
 
     layout->setContentsMargins(30, 0, 0, 15);
     layout->setSpacing(0);
+}
+
+void ResponseBody::setContent(const QString &content)
+{
+    editor->setPlainText(content);
 }
 
 
@@ -389,6 +399,14 @@ void ResponsePart::initUi()
     layout->setContentsMargins(20, 20, 20, 20);
 }
 
+void ResponsePart::handleResponse(BaseHttpResponse *response)
+{
+    infoLabel->hide();
+    splitter->show();
+    responseBody->setContent(response->text());
+    responseHeader->setContent(response->getHeaderString());
+}
+
 
 RequestsContentPage::RequestsContentPage(QWidget* parent)
     : QWidget(parent)
@@ -397,6 +415,7 @@ RequestsContentPage::RequestsContentPage(QWidget* parent)
     , responsePart(new ResponsePart(this))
 {
     initUi();
+    initSignals();
 }
 
 void RequestsContentPage::initUi()
@@ -405,6 +424,11 @@ void RequestsContentPage::initUi()
     layout->addSpacing(10);
     layout->addWidget(responsePart);
     layout->setContentsMargins(15, 30, 15, 30);
+}
+
+void RequestsContentPage::initSignals()
+{
+    connect(requestPart, &RequestPart::receivedResponse, this, [&](BaseHttpResponse* response){responsePart->handleResponse(response);});
 }
 
 void RequestsContentPage::rotate()

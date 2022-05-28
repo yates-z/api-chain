@@ -89,7 +89,7 @@ private:
     QStackedWidget* bottomContent;
     QTextEdit* editor;
 private:
-    QMap<QString, QString> headers;
+    QMultiMap<QString, QString> headers;
 };
 
 class RequestBody: public QWidget
@@ -112,6 +112,8 @@ private:
 class RequestPart: public BorderRadiusWidget
 {
     Q_OBJECT
+signals:
+    void receivedResponse(BaseHttpResponse*);
 public:
     RequestPart(QWidget* parent=nullptr);
     void initUi();
@@ -139,6 +141,7 @@ class ResponseHeader: public QWidget
     Q_OBJECT
 public:
     ResponseHeader(QWidget* parent);
+    void setContent(const QString&);
 private:
     QVBoxLayout* layout;
     int headerTabHeight;
@@ -152,6 +155,7 @@ class ResponseBody: public QWidget
     Q_OBJECT
 public:
     ResponseBody(QWidget* parent);
+    void setContent(const QString&);
 private:
     QVBoxLayout* layout;
     int headerTabHeight;
@@ -168,6 +172,7 @@ class ResponsePart: public BorderRadiusWidget
 public:
     ResponsePart(QWidget* parent=nullptr);
     void initUi();
+    void handleResponse(BaseHttpResponse*);
 private:
     QLabel* titleLabel;
     QLabel* infoLabel;
@@ -186,6 +191,7 @@ public:
     RequestsContentPage(QWidget* parent=nullptr);
     void initUi();
     void rotate();
+    void initSignals();
 private:
     QVBoxLayout* layout;
     RequestPart* requestPart;

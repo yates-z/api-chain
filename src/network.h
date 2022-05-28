@@ -11,6 +11,7 @@
 #include <QNetworkCookie>
 #include <QEventLoop>
 #include <QNetworkReply>
+#include <QJsonObject>
 #include <QJsonDocument>
 #include <iostream>
 
@@ -25,7 +26,7 @@ public:
     virtual bool ok() = 0;
 
     // Throw HTTPError if one occured
-    virtual void raise_for_status() = 0;
+    virtual QString status_errors() = 0;
 
     // True if this Response is a well-formed HTTP redirect that could have
     // been processed automatically
@@ -37,13 +38,16 @@ public:
     // Content of the response, in bytes.
     virtual QByteArray content() = 0;
 
+    // Content of response, in QString.
+    virtual QString text() = 0;
+
     // Returns the json-encoded content of a response, if any.
-    virtual QJsonDocument json() = 0;
+    virtual QJsonObject json() = 0;
 
     // Returns the parsed header links of the response, if any.
     virtual QMultiMap<QString, QString> links() = 0;
 
-//    void close();
+    QString getHeaderString();
 
 protected:
     QByteArray _content;
@@ -160,14 +164,16 @@ class QtHttpResponse: public BaseHttpResponse
 {
     Q_OBJECT
 public:
-    QtHttpResponse(QNetworkReply* reply);
+    QtHttpResponse(QNetworkReply* reply=nullptr);
     ~QtHttpResponse();
 
-    friend std::ostream& operator<< (std::ostream& os, const QtHttpResponse& p);
+    friend std::ostream& operator << (std::ostream& os, const QtHttpResponse& p);
+
+    void setReply(QNetworkReply*);
 
     bool ok();
 
-    void raise_for_status();
+    QString status_errors();
 
     bool is_redirect();
 
@@ -175,7 +181,9 @@ public:
 
     QByteArray content();
 
-    QJsonDocument json();
+    QString text();
+
+    QJsonObject json();
 
     QMultiMap<QString, QString> links();
 private:
