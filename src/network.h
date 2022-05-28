@@ -13,6 +13,7 @@
 #include <QNetworkReply>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QTime>
 #include <iostream>
 
 
@@ -48,7 +49,19 @@ public:
     virtual QMultiMap<QString, QString> links() = 0;
 
     QString getHeaderString();
+    QMultiMap<QString, QString> headers();
 
+    int statusCode();
+    QString reason();
+
+public:
+    // The amount of time elapsed between sending the request
+    // and the arrival of the response (as a timedelta).
+    // This property specifically measures the time taken between sending
+    // the first byte of the request and finishing parsing the headers. It
+    // is therefore unaffected by consuming the response content or the
+    // value of the ``stream`` keyword argument.
+    long elapsed;
 protected:
     QByteArray _content;
     QByteArray _next;
@@ -61,7 +74,7 @@ protected:
     // Case-insensitive Dictionary of Response Headers.
     // For example, ``headers['content-encoding']`` will return the
     // value of a ``'Content-Encoding'`` response header.
-    QMultiMap<QString, QString> headers;
+    QMultiMap<QString, QString> _headers;
 
     // File-like object representation of response (for advanced usage).
     // Use of ``raw`` requires that ``stream=True`` be set on the request.
@@ -80,22 +93,16 @@ protected:
     QList<BaseHttpResponse*> history;
 
     // Textual reason of responded HTTP Status, e.g. "Not Found" or "OK".
-    QString reason;
+    QString _reason;
 
     // A CookieJar of Cookies the server sent back.
     QList<QNetworkCookie> cookieList;
 
-    // The amount of time elapsed between sending the request
-    // and the arrival of the response (as a timedelta).
-    // This property specifically measures the time taken between sending
-    // the first byte of the request and finishing parsing the headers. It
-    // is therefore unaffected by consuming the response content or the
-    // value of the ``stream`` keyword argument.
-    long elapsed;
-
-    // The :class:`PreparedRequest <PreparedRequest>` object to which this
+    // The :class:`BaseHttpRequest <BaseHttpRequest>` object to which this
     // is a response.
-//    self.request = None
+//    BaseHttpRequest request
+
+    QTime _time;
 
 };
 

@@ -175,7 +175,9 @@ public:
     void handleResponse(BaseHttpResponse*);
 private:
     QLabel* titleLabel;
+    QLabel* elapsedLabel;
     QLabel* infoLabel;
+    QLabel* statusLabel;
     QSplitter* splitter;
     ResponseHeader* responseHeader;
     ResponseBody* responseBody;

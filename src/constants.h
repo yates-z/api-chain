@@ -15,6 +15,9 @@ namespace ColorStyle {
     const QColor currentFocusColor = orange;
     const QColor currentHoverColor = QColor(30, 35, 47);
     const QColor currentBackground = white;
+    const QColor currentSuccessColor = QColor(0, 158, 79);
+    const QColor currentFailedColor = QColor(255, 126, 77);
+    const QColor currentWarningColor = QColor(254, 63, 63);
 }
 
 #endif // CONSTANTS_H

@@ -6,13 +6,30 @@ BaseHttpResponse::BaseHttpResponse()
 QString BaseHttpResponse::getHeaderString()
 {
     QString headers;
-    foreach(QString s, this->headers.uniqueKeys())
+    foreach(QString s, this->_headers.uniqueKeys())
     {
-        foreach(QString v, this->headers.values(s))
+        foreach(QString v, this->_headers.values(s))
             headers += s + ": " + v + "\n";
     }
     return headers;
 }
+
+QMultiMap<QString, QString> BaseHttpResponse::headers(){
+    return _headers;
+}
+
+int BaseHttpResponse::statusCode()
+{
+    if (status_code.isEmpty())
+        return 0;
+    return status_code.toInt();
+}
+
+QString BaseHttpResponse::reason()
+{
+    return _reason;
+}
+
 
 BaseHttpRequest::BaseHttpRequest()
 {}
@@ -21,6 +38,7 @@ BaseHttpRequest::BaseHttpRequest()
 QtHttpResponse::QtHttpResponse(QNetworkReply* reply)
     : BaseHttpResponse()
 {
+    _time = QTime::currentTime();
     _content_consumed = false;
     setReply(reply);
 }
@@ -41,12 +59,13 @@ void QtHttpResponse::setReply(QNetworkReply *reply)
     this->reply = reply;
     if (this->reply)
     {
+        this->elapsed =  _time.msecsTo(QTime::currentTime());
         this->status_code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toString();
-        this->reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+        this->_reason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
         this->url = reply->url().toString();
         QList<QByteArray> headerList = reply->rawHeaderList();
         foreach(QByteArray head, headerList) {
-            headers.insert(QString::fromLocal8Bit(head), QString::fromLocal8Bit(reply->rawHeader(head)));
+            _headers.insert(QString::fromLocal8Bit(head), QString::fromLocal8Bit(reply->rawHeader(head)));
         }
     }
 }
@@ -63,21 +82,21 @@ QString QtHttpResponse::status_errors()
 {
     QString http_error_msg = "";
     if (400 <= status_code.toInt() && status_code.toInt() < 500)
-        http_error_msg = QString("%1 Client Error: %2 for url: %3").arg(status_code, reason, url);
+        http_error_msg = QString("%1 Client Error: %2 for url: %3").arg(status_code, _reason, url);
     else if (500 <= status_code.toInt() && status_code.toInt() < 600)
-        http_error_msg = QString("%1 Server Error: %s for url: %s").arg(status_code, reason, url);
+        http_error_msg = QString("%1 Server Error: %s for url: %s").arg(status_code, _reason, url);
     return http_error_msg;
 }
 
 bool QtHttpResponse::is_redirect()
 {
 
-    return headers.uniqueKeys().contains("location") && QList<QString>{"301", "302", "303", "307", "308"}.contains(status_code);
+    return _headers.uniqueKeys().contains("location") && QList<QString>{"301", "302", "303", "307", "308"}.contains(status_code);
 }
 
 bool QtHttpResponse::is_permanent_redirect()
 {
-    return headers.uniqueKeys().contains("location") && QList<QString>{"301", "308"}.contains(status_code);
+    return _headers.uniqueKeys().contains("location") && QList<QString>{"301", "308"}.contains(status_code);
 }
 
 QByteArray QtHttpResponse::content()

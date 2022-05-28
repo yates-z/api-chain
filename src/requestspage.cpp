@@ -365,6 +365,8 @@ void ResponseBody::setContent(const QString &content)
 ResponsePart::ResponsePart(QWidget* parent)
     : BorderRadiusWidget(parent)
     , titleLabel(new QLabel(tr("Response")))
+    , elapsedLabel(new QLabel(tr("Elapsed Time: 0ms")))
+    , statusLabel(new QLabel(""))
     , infoLabel(new QLabel(tr("Not available, a request has not been sent yet.")))
     , splitter(new QSplitter(this))
     , responseHeader(new ResponseHeader(this))
@@ -377,6 +379,7 @@ void ResponsePart::initUi()
 {
     QVBoxLayout *layout = new QVBoxLayout(this);
 
+    QHBoxLayout *topLayout = new QHBoxLayout();
     QFont font = titleLabel->font();
     font.setWeight(QFont::DemiBold);
     font.setPointSize(18);
@@ -385,7 +388,28 @@ void ResponsePart::initUi()
     QPalette palette = titleLabel->palette();
     palette.setColor(QPalette::WindowText, ColorStyle::currentFontColor);
     titleLabel->setPalette(palette);
-    layout->addWidget(titleLabel);
+    topLayout->addWidget(titleLabel);
+    topLayout->addStretch(1);
+
+    statusLabel->hide();
+    QFont statusLabelFont = statusLabel->font();
+    statusLabelFont.setPointSize(11);
+    statusLabel->setFont(statusLabelFont);
+    topLayout->addWidget(statusLabel);
+
+
+    elapsedLabel->hide();
+    QFont elapsedLabelFont = elapsedLabel->font();
+    elapsedLabelFont.setPointSize(11);
+    elapsedLabel->setFont(elapsedLabelFont);
+    QPalette palette2 = elapsedLabel->palette();
+    palette2.setColor(QPalette::WindowText, ColorStyle::currentLineColor);
+    elapsedLabel->setPalette(palette2);
+
+    topLayout->addWidget(elapsedLabel);
+    topLayout->setContentsMargins(0, 0, 10, 0);
+
+    layout->addLayout(topLayout);
 
     infoLabel->setPalette(palette);
     layout->addWidget(infoLabel);
@@ -402,9 +426,25 @@ void ResponsePart::initUi()
 void ResponsePart::handleResponse(BaseHttpResponse *response)
 {
     infoLabel->hide();
-    splitter->show();
+
+    statusLabel->show();
+    int statusCode = response->statusCode();
+    statusLabel->setText(QString(tr("Status Code")) + QString(": %1").arg(statusCode) + QString(" %2").arg(response->reason()));
+    QPalette palette = statusLabel->palette();
+    if (statusCode>=200 && statusCode < 300)
+        palette.setColor(QPalette::WindowText, ColorStyle::currentSuccessColor);
+    else if (statusCode>=400)
+        palette.setColor(QPalette::WindowText, ColorStyle::currentFailedColor);
+    else
+        palette.setColor(QPalette::WindowText, ColorStyle::currentWarningColor);
+    statusLabel->setPalette(palette);
+
+    elapsedLabel->show();
+    elapsedLabel->setText(QString(tr("Elapsed Time")) + QString(": %1ms").arg(response->elapsed));
+
     responseBody->setContent(response->text());
     responseHeader->setContent(response->getHeaderString());
+    splitter->show();
 }
 
 

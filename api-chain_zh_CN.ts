@@ -59,7 +59,22 @@
     </message>
     <message>
         <location filename="src/requestspage.cpp" line="368"/>
+        <source>Elapsed Time: 0ms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/requestspage.cpp" line="370"/>
         <source>Not available, a request has not been sent yet.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/requestspage.cpp" line="432"/>
+        <source>Status Code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/requestspage.cpp" line="443"/>
+        <source>Elapsed Time</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
