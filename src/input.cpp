@@ -15,6 +15,9 @@ FilterInput::FilterInput(QWidget *parent)
                   "QLineEdit:focus {border: 1px solid %3;}").arg(
                    lineColor).arg(margin).arg(focusColor));
     this->setStyleSheet(qss);
+    QPalette p = palette();
+    p.setColor(QPalette::Text, ColorStyle::currentFontColor);
+    setPalette(p);
 }
 
 void FilterInput::paintEvent(QPaintEvent *event)
@@ -91,9 +94,6 @@ URLInput::URLInput(QString text, QWidget* parent)
     this->setPlaceholderText("Type an URI");
     this->setText(text);
 
-    QPalette p = palette();
-    p.setColor(QPalette::Text, ColorStyle::currentFontColor);
-    setPalette(p);
     initSignals();
 }
 

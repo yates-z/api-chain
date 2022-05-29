@@ -223,7 +223,7 @@ RequestBody::RequestBody(QWidget* parent)
 RequestPart::RequestPart(QWidget* parent)
     : BorderRadiusWidget(parent)
     , layout(new QVBoxLayout(this))
-    , methodSelector(new QComboBox(this))
+    , methodSelector(new BasicComboBox(this))
     , urlInput(new URLInput("https://", this))
     , lengthLable(new QLabel(QString("length: %1 byte(s)").arg(urlInput->text().toLocal8Bit().length())))
     , sendButton(new SendButton(this))
@@ -253,6 +253,7 @@ void RequestPart::initUi()
     topLayout->addWidget(label2, 0, 1);
 
     methodSelector->addItems({"GET", "POST", "PATCH", "PUT", "DELETE", "HEAD", "OPTIONS"});
+    methodSelector->setFixedHeight(28);
     topLayout->addWidget(methodSelector, 1, 0);
 
     urlInput->setFixedHeight(28);

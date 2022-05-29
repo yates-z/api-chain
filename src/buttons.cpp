@@ -349,9 +349,9 @@ void RealSendButton::paintEvent(QPaintEvent *event)
     if (rightPart)
     {
         painter.setBrush(QColor("#FFFFFF"));
-        QPoint point1(width()/2 - 6, height()/2 - 2);
-        QPoint point2(width()/2 + 2, height()/2 - 2);
-        QPoint point3(width()/2 - 2, height()/2 + 2);
+        QPoint point1(width()/2 - 5, height()/2 - 2);
+        QPoint point2(width()/2 + 1, height()/2 - 2);
+        QPoint point3(width()/2 - 2, height()/2 + 1);
 
         QPolygon polygon;
         polygon.append(point1);

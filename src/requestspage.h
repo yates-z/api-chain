@@ -10,7 +10,6 @@
 #include <QSysInfo>
 #include <QList>
 #include <QLabel>
-#include <QComboBox>
 #include <QTextEdit>
 
 #include "buttons.h"
@@ -18,6 +17,7 @@
 #include "input.h"
 #include "labels.h"
 #include "network.h"
+#include "combobox.h"
 #include <QDebug>
 
 class HistoryWidget: public QWidget
@@ -122,7 +122,7 @@ public:
 private:
     QVBoxLayout* layout;
     // http method selector
-    QComboBox* methodSelector;
+    BasicComboBox* methodSelector;
     // url input
     URLInput* urlInput;
     // A label to show url length
