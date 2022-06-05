@@ -53,27 +53,27 @@
 <context>
     <name>ResponsePart</name>
     <message>
-        <location filename="src/requestspage.cpp" line="368"/>
+        <location filename="src/requestspage.cpp" line="418"/>
         <source>Response</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/requestspage.cpp" line="369"/>
+        <location filename="src/requestspage.cpp" line="419"/>
         <source>Elapsed Time: 0ms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/requestspage.cpp" line="371"/>
+        <location filename="src/requestspage.cpp" line="421"/>
         <source>Not available, a request has not been sent yet.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/requestspage.cpp" line="433"/>
+        <location filename="src/requestspage.cpp" line="483"/>
         <source>Status Code</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/requestspage.cpp" line="444"/>
+        <location filename="src/requestspage.cpp" line="494"/>
         <source>Elapsed Time</source>
         <translation type="unfinished"></translation>
     </message>

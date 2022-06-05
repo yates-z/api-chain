@@ -12,6 +12,7 @@ namespace ColorStyle {
     const QColor currentFontColor = QColor(90, 90, 100);
     const QColor currentTooltipColor = QColor(136, 136, 136);
     const QColor currentLineColor = QColor(145, 145, 145);
+    const QColor lighterLineColor = QColor(205, 205, 205);
     const QColor currentFocusColor = orange;
     const QColor currentHoverColor = QColor(30, 35, 47);
     const QColor currentBackground = white;

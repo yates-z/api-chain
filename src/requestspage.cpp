@@ -166,20 +166,25 @@ RequestHeader::RequestHeader(QWidget* parent)
     : QWidget(parent)
     , layout(new QVBoxLayout(this))
     , headerTabHeight(10)
-    , comboBox(new QComboBox(this))
+    , comboBox(new NoInputComboBox(this))
     , bottomContent(new QStackedWidget(this))
     , editor(new QTextEdit(this))
 {
     QHBoxLayout* topLayout = new QHBoxLayout;
-    topLayout->addWidget(new QLabel("HEADERS"), Qt::AlignLeft);
+    QLabel *label = new QLabel("HEADERS");
+    QPalette p = label->palette();
+    p.setColor(QPalette::WindowText, ColorStyle::currentFontColor);
+    label->setPalette(p);
+    topLayout->addWidget(label, Qt::AlignLeft);
     topLayout->addStretch(1);
     comboBox->addItems({"Form", "Raw"});
+    comboBox->setFixedSize(65, 28);
     topLayout->addWidget(comboBox, Qt::AlignRight);
 
     layout->addLayout(topLayout);
-    SplitLine *splitline = new SplitLine(1, width());
-    splitline->setOrientation(Qt::Horizontal);
-    layout->addWidget(splitline);
+//    SplitLine *splitline = new SplitLine(1, width());
+//    splitline->setOrientation(Qt::Horizontal);
+//    layout->addWidget(splitline);
 
     layout->addSpacing(10);
 
@@ -190,25 +195,36 @@ RequestHeader::RequestHeader(QWidget* parent)
     layout->setSpacing(0);
 }
 
+void RequestHeader::paintEvent(QPaintEvent *event)
+{
+    QWidget::paintEvent(event);
+    QPainter painter(this);
+    QPen pen;
+    pen.setColor(ColorStyle::lighterLineColor);
+    painter.setPen(pen);
+    painter.drawLine(0, 28, width() - 30, 28);
+}
 
 RequestBody::RequestBody(QWidget* parent)
     : QWidget(parent)
     , layout(new QVBoxLayout(this))
     , headerTabHeight(10)
-    , comboBox(new QComboBox(this))
+    , comboBox(new NoInputComboBox(this))
     , bottomContent(new QStackedWidget(this))
     , editor(new QTextEdit(this))
 {
     QHBoxLayout* topLayout = new QHBoxLayout;
-    topLayout->addWidget(new QLabel("BODY"), Qt::AlignLeft);
+    QLabel *label = new QLabel("BODY");
+    QPalette p = label->palette();
+    p.setColor(QPalette::WindowText, ColorStyle::currentFontColor);
+    label->setPalette(p);
+    topLayout->addWidget(label, Qt::AlignLeft);
     topLayout->addStretch(1);
     comboBox->addItems({"Text", "Form", "File"});
+    comboBox->setFixedSize(65, 28);
     topLayout->addWidget(comboBox, Qt::AlignRight);
 
     layout->addLayout(topLayout);
-    SplitLine *splitline = new SplitLine(1, width());
-    splitline->setOrientation(Qt::Horizontal);
-    layout->addWidget(splitline);
 
     layout->addSpacing(10);
 
@@ -218,6 +234,17 @@ RequestBody::RequestBody(QWidget* parent)
     layout->setContentsMargins(30, 0, 0, 15);
     layout->setSpacing(0);
 }
+
+void RequestBody::paintEvent(QPaintEvent *event)
+{
+    QWidget::paintEvent(event);
+    QPainter painter(this);
+    QPen pen;
+    pen.setColor(ColorStyle::lighterLineColor);
+    painter.setPen(pen);
+    painter.drawLine(30, 28, width(), 28);
+}
+
 
 
 RequestPart::RequestPart(QWidget* parent)
@@ -299,20 +326,22 @@ ResponseHeader::ResponseHeader(QWidget* parent)
     :QWidget(parent)
     , layout(new QVBoxLayout(this))
     , headerTabHeight(10)
-    , comboBox(new QComboBox(this))
+    , comboBox(new NoInputComboBox(this))
     , bottomContent(new QStackedWidget(this))
     , editor(new QTextEdit(this))
 {
     QHBoxLayout* topLayout = new QHBoxLayout;
-    topLayout->addWidget(new QLabel("HEADERS"), Qt::AlignLeft);
+    QLabel *label = new QLabel("HEADERS");
+    QPalette p = label->palette();
+    p.setColor(QPalette::WindowText, ColorStyle::currentFontColor);
+    label->setPalette(p);
+    topLayout->addWidget(label, Qt::AlignLeft);
     topLayout->addStretch(1);
     comboBox->addItems({"pretty", "raw"});
+    comboBox->setFixedSize(65, 28);
     topLayout->addWidget(comboBox, Qt::AlignRight);
 
     layout->addLayout(topLayout);
-    SplitLine *splitline = new SplitLine(1, width());
-    splitline->setOrientation(Qt::Horizontal);
-    layout->addWidget(splitline);
 
     layout->addSpacing(10);
 
@@ -328,25 +357,37 @@ void ResponseHeader::setContent(const QString &content)
     editor->setPlainText(content);
 }
 
+void ResponseHeader::paintEvent(QPaintEvent *event)
+{
+    QWidget::paintEvent(event);
+    QPainter painter(this);
+    QPen pen;
+    pen.setColor(ColorStyle::lighterLineColor);
+    painter.setPen(pen);
+    painter.drawLine(0, 28, width() - 30, 28);
+}
+
 
 ResponseBody::ResponseBody(QWidget* parent)
     :QWidget(parent)
     , layout(new QVBoxLayout(this))
     , headerTabHeight(10)
-    , comboBox(new QComboBox(this))
+    , comboBox(new NoInputComboBox(this))
     , bottomContent(new QStackedWidget(this))
     , editor(new QTextEdit(this))
 {
     QHBoxLayout* topLayout = new QHBoxLayout;
-    topLayout->addWidget(new QLabel("BODY"), Qt::AlignLeft);
+    QLabel *label = new QLabel("BODY");
+    QPalette p = label->palette();
+    p.setColor(QPalette::WindowText, ColorStyle::currentFontColor);
+    label->setPalette(p);
+    topLayout->addWidget(label, Qt::AlignLeft);
     topLayout->addStretch(1);
     comboBox->addItems({"pretty", "raw", "preview"});
+    comboBox->setFixedSize(65, 28);
     topLayout->addWidget(comboBox, Qt::AlignRight);
 
     layout->addLayout(topLayout);
-    SplitLine *splitline = new SplitLine(1, width());
-    splitline->setOrientation(Qt::Horizontal);
-    layout->addWidget(splitline);
 
     layout->addSpacing(10);
 
@@ -362,6 +403,15 @@ void ResponseBody::setContent(const QString &content)
     editor->setPlainText(content);
 }
 
+void ResponseBody::paintEvent(QPaintEvent *event)
+{
+    QWidget::paintEvent(event);
+    QPainter painter(this);
+    QPen pen;
+    pen.setColor(ColorStyle::lighterLineColor);
+    painter.setPen(pen);
+    painter.drawLine(30, 28, width(), 28);
+}
 
 ResponsePart::ResponsePart(QWidget* parent)
     : BorderRadiusWidget(parent)

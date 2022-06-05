@@ -83,6 +83,8 @@ class RequestHeader: public QWidget
 public:
     RequestHeader(QWidget* parent);
 private:
+    void paintEvent(QPaintEvent*);
+private:
     QVBoxLayout* layout;
     int headerTabHeight;
     QComboBox* comboBox;
@@ -97,6 +99,8 @@ class RequestBody: public QWidget
     Q_OBJECT
 public:
     RequestBody(QWidget* parent);
+private:
+    void paintEvent(QPaintEvent*);
 private:
     QVBoxLayout* layout;
     int headerTabHeight;
@@ -143,6 +147,8 @@ public:
     ResponseHeader(QWidget* parent);
     void setContent(const QString&);
 private:
+    void paintEvent(QPaintEvent*);
+private:
     QVBoxLayout* layout;
     int headerTabHeight;
     QComboBox* comboBox;
@@ -156,6 +162,8 @@ class ResponseBody: public QWidget
 public:
     ResponseBody(QWidget* parent);
     void setContent(const QString&);
+private:
+    void paintEvent(QPaintEvent*);
 private:
     QVBoxLayout* layout;
     int headerTabHeight;

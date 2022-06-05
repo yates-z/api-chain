@@ -29,12 +29,21 @@ public:
 private:
     void paintEvent(QPaintEvent*);
     bool eventFilter(QObject *, QEvent *);
-private:
+protected:
     int borderRadius;
     int itemHight;
     int miniWidth;
     bool _isPopup;
     bool _forcePopup;
+    QPoint pos;
 };
 
+
+class NoInputComboBox: public BasicComboBox
+{
+    Q_OBJECT
+public:
+    NoInputComboBox(QWidget *parent=nullptr);
+    void showPopup();
+};
 #endif // COMBOBOX_H
